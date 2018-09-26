@@ -32,6 +32,13 @@ void logsys_usb_close(libusb_device_handle* dev){
 	libusb_close(dev);
 }
 
+bool logsys_hotplug_enable(libusb_hotplug_event evt, libusb_hotplug_callback_fn cb, libusb_hotplug_callback_handle* hndl){
+	if(!libusb_was_init&&!logsys_usb_init())
+		return false;
+	int resp=libusb_hotplug_register_callback(NULL, evt, 0, LOGSYS_VID, LOGSYS_PID, LIBUSB_HOTPLUG_MATCH_ANY, cb, NULL, hndl);
+	return resp==LIBUSB_SUCCESS;
+}
+
 int logsys_tx_get_req1(libusb_device_handle* dev, char* data){
 	return libusb_control_transfer(dev, LOGSYS_REQTYP_IN, 1, 0, 0, data, 12, 0);
 }

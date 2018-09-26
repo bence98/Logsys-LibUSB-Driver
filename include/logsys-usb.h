@@ -20,6 +20,8 @@ bool logsys_usb_init();
 bool logsys_usb_end();
 libusb_device_handle* logsys_usb_open();
 void logsys_usb_close(libusb_device_handle* dev);
+//don't forget to `libusb_hotplug_deregister_callback()`!
+/*async*/ bool logsys_hotplug_enable(libusb_hotplug_event evt_type, libusb_hotplug_callback_fn callback, /*out*/libusb_hotplug_callback_handle* hndl);
 
 //data -> char[12]
 int logsys_tx_get_req1(libusb_device_handle* dev, /*out*/char* data);
