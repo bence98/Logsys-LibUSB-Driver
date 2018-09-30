@@ -39,7 +39,7 @@ bool logsys_hotplug_enable(libusb_hotplug_event evt, libusb_hotplug_callback_fn 
 	return resp==LIBUSB_SUCCESS;
 }
 
-int logsys_tx_get_status(libusb_device_handle* dev, char* data){
+int logsys_tx_get_status(libusb_device_handle* dev, LogsysStatus* data){
 	return libusb_control_transfer(dev, LOGSYS_REQTYP_IN, 1, 0, 0, data, 12, 0);
 }
 

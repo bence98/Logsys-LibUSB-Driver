@@ -1,5 +1,7 @@
-#ifndef _LOGSYSDRV_USB_UTIL_H
-#define _LOGSYSDRV_USB_UTIL_H
+#ifndef _LOGSYSDRV_USB_H
+#define _LOGSYSDRV_USB_H
+
+#include "logsys-common.h"
 
 #define LOGSYS_VID 0x03eb
 #define LOGSYS_PID 0xf0ff
@@ -23,8 +25,7 @@ void logsys_usb_close(libusb_device_handle* dev);
 //don't forget to `libusb_hotplug_deregister_callback()`!
 /*async*/ bool logsys_hotplug_enable(libusb_hotplug_event evt_type, libusb_hotplug_callback_fn callback, /*out*/libusb_hotplug_callback_handle* hndl);
 
-//data -> char[12]
-int logsys_tx_get_status(libusb_device_handle* dev, /*out*/char* data);
+int logsys_tx_get_status(libusb_device_handle* dev, /*out*/LogsysStatus* data);
 //will trigger -EOVERFLOW (-8)
 //data -> char[4]
 int logsys_tx_clk(libusb_device_handle* dev, /*out*/char* data);
@@ -42,4 +43,4 @@ int logsys_tx_set_vcc(libusb_device_handle* dev, bool vcc);
 //jtag_dev -> char[2]: some info about the JTAG device (FPGA model?)
 int logsys_tx_scan_jtag(libusb_device_handle* dev, /*out*/char* num_boards, /*out*/char* jtag_dev);
 
-#endif //_LOGSYSDRV_USB_UTIL_H
+#endif //_LOGSYSDRV_USB_H
