@@ -39,15 +39,15 @@ bool logsys_hotplug_enable(libusb_hotplug_event evt, libusb_hotplug_callback_fn 
 	return resp==LIBUSB_SUCCESS;
 }
 
-int logsys_tx_get_req1(libusb_device_handle* dev, char* data){
+int logsys_tx_get_status(libusb_device_handle* dev, char* data){
 	return libusb_control_transfer(dev, LOGSYS_REQTYP_IN, 1, 0, 0, data, 12, 0);
 }
 
-int logsys_tx_get_req4(libusb_device_handle* dev, char* data){
+int logsys_tx_clk(libusb_device_handle* dev, char* data){
 	return libusb_control_transfer(dev, LOGSYS_REQTYP_IN, 4, 0, 0x02, data, 1, 0);
 }
 
-int logsys_tx_unk_req2(libusb_device_handle* dev, char* ch, char* buf){
+int logsys_tx_pwr_limit(libusb_device_handle* dev, char* ch, char* buf){
 	int resp=libusb_control_transfer(dev, LOGSYS_REQTYP_IN,  2, 0x0100, 0, ch, 1, 0);
 	if(resp<0) return resp;
 	resp=libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 2, 0x0100, 0, NULL, 0, 0);

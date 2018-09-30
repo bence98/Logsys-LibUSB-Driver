@@ -24,18 +24,18 @@ void logsys_usb_close(libusb_device_handle* dev);
 /*async*/ bool logsys_hotplug_enable(libusb_hotplug_event evt_type, libusb_hotplug_callback_fn callback, /*out*/libusb_hotplug_callback_handle* hndl);
 
 //data -> char[12]
-int logsys_tx_get_req1(libusb_device_handle* dev, /*out*/char* data);
+int logsys_tx_get_status(libusb_device_handle* dev, /*out*/char* data);
 //will trigger -EOVERFLOW (-8)
 //data -> char[4]
-int logsys_tx_get_req4(libusb_device_handle* dev, /*out*/char* data);
+int logsys_tx_clk(libusb_device_handle* dev, /*out*/char* data);
 //will trigger -EPIPE (-9)
 //data -> char[1]
-int logsys_tx_get_req5(libusb_device_handle* dev, /*out*/char* data);
+int logsys_tx_reset(libusb_device_handle* dev, /*out*/char* data);
 //unknown operation, looks like some preamble (maybe signals whether LogSYS GUI is running?)
 //sends a request#2 value=4
 //ch -> char[1] (usually =0)
 //buf -> char[21]
-int logsys_tx_unk_req2(libusb_device_handle* dev, /*out*/char* ch, /*out*/char* buf);
+int logsys_tx_pwr_limit(libusb_device_handle* dev, /*out*/char* ch, /*out*/char* buf);
 int logsys_tx_set_vcc(libusb_device_handle* dev, bool vcc);
 //I've taken a WildAssGuess as to what the parameters may be
 //num_boards -> char[1]: number of JTAG devices on the chain

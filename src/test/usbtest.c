@@ -30,7 +30,7 @@ int main(void){
 			case '1':
 				fprintf(stderr, "REQ1\n");
 				char buf1[12];
-				res=logsys_tx_get_req1(logsys, buf1);
+				res=logsys_tx_get_status(logsys, buf1);
 				if(res<0)
 					fprintf(stderr, "Failed! %d\n", res);
 				fprintf(stderr, "Got "); print_buf(buf1, 12); fprintf(stderr, "\n");
@@ -38,7 +38,7 @@ int main(void){
 			case '4':
 				fprintf(stderr, "REQ4\n");
 				char buf4[4];
-				res=logsys_tx_get_req4(logsys, buf4);
+				res=logsys_tx_clk(logsys, buf4);
 				if(res<0)
 					fprintf(stderr, "Failed! %d\n", res);
 				fprintf(stderr, "Got "); print_buf(buf4, 4); fprintf(stderr, "\n");
@@ -46,7 +46,7 @@ int main(void){
 			case '2':
 				fprintf(stderr, "REQ2\n");
 				char buf2[21], ch;
-				res=logsys_tx_unk_req2(logsys, &ch, buf2);
+				res=logsys_tx_pwr_limit(logsys, &ch, buf2);
 				if(res<0)
 					fprintf(stderr, "Failed! %d\n", res);
 				fprintf(stderr, "Got %02X ", ch); print_buf(buf2, 21); fprintf(stderr, "\n");

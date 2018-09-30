@@ -9,8 +9,7 @@ all: build/logsys-drv.so
 test: build/logsys-test build/hotplug-test
 
 clean:
-	rm -f build/*/*
-	rm -f build/*
+	find build -type f -delete
 
 build/logsys-drv.so: $(OBJS_SO)
 	$(CC) $(CFLAGS) $^ --shared -o $@
