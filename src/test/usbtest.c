@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include "logsys-usb.h"
+#include "logsys-status.h"
 
 void print_buf(char* buf, int len){
 	for(int i=0;i<len;i++)
@@ -28,32 +29,64 @@ int main(void){
 		int res;
 		switch(cmd){
 			case '1':
-				fprintf(stderr, "REQ1\n");
+				fprintf(stderr, "Get status\n");
 				LogsysStatus status={0};
 				res=logsys_tx_get_status(logsys, &status);
-				if(res<0)
+				if(res<0){
 					fprintf(stderr, "Failed! %d\n", res);
-				fprintf(stderr, "Got "); print_buf(&status, sizeof(status)); fprintf(stderr, "\n");
+					break;
+				}
+				
+				fprintf(stderr, " VCC | V_j | Vio |  I  |*+-|J12RSNI\n");
+				fprintf(stderr, "%5.2f|%5.2f|%5.2f|%5.2f|%c%c%c|%c%c%c%c%c%c%c\n",
+					logsys_get_vcc_out(status),
+					logsys_get_vjtag_out(status),
+					logsys_get_vio_out(status),
+					logsys_get_current_ma(status),
+					logsys_is_vcc(status)?'.':' ',
+					logsys_is_overcurr(status)?'.':' ',
+					logsys_is_revcurr(status)?'.':' ',
+					
+					logsys_is_jtag_used(status)?'.':' ',
+					logsys_is_clk1_used(status)?'.':' ',
+					logsys_is_clk2_used(status)?'.':' ',
+					logsys_is_rst_used(status)?'.':' ',
+					logsys_is_sio_used(status)?'.':' ',
+					logsys_is_end_ni_used(status)?'.':' ',
+					logsys_is_end_int_used(status)?'.':' '
+				);
 				break;
 			case '4':
-				fprintf(stderr, "REQ4\n");
+				fprintf(stderr, "Clock status:\n");
 				LogsysClkStatus clkStatus={0};
 				res=logsys_tx_clk_status(logsys, &clkStatus);
-				if(res<0)
+				if(res<0){
 					fprintf(stderr, "Failed! %d\n", res);
-				fprintf(stderr, "Got "); print_buf(&clkStatus, sizeof(clkStatus)); fprintf(stderr, "\n");
+					break;
+				}
+				if(clkStatus.active)
+					fprintf(stderr, "Period register(LE): %02X %02X, prescaler: %02X\n", clkStatus.periodRegL, clkStatus.periodRegH, clkStatus.prescaler);
+				else
+					fprintf(stderr, "Clock is off\n");
 				break;
 			case '2':
-				fprintf(stderr, "REQ2\n");
+				fprintf(stderr, "Get power limit:\n");
 				char buf2[21];
 				LogsysPwrLimit limit={0};
 				res=logsys_tx_get_pwr_limit(logsys, &limit);
-				if(res<0)
+				if(res<0){
 					fprintf(stderr, "Failed! %d\n", res);
+					break;
+				}
+				fprintf(stderr, "Max power: %d mA\n",
+					limit==L450mA?450:limit==L700mA?700:limit==L950mA?950:-1
+				);
 				res=logsys_tx_get_pwr_corr(logsys, buf2);
-				if(res<0)
+				if(res<0){
 					fprintf(stderr, "Failed! %d\n", res);
-				fprintf(stderr, "Got %02X ", limit); print_buf(buf2, 21); fprintf(stderr, "\n");
+					break;
+				}
+				fprintf(stderr, "Got "); print_buf(buf2, 21); fprintf(stderr, "\n");
 				break;
 			case '+':
 				fprintf(stderr, "Vcc ON\n");
