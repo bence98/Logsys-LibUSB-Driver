@@ -29,27 +29,31 @@ int main(void){
 		switch(cmd){
 			case '1':
 				fprintf(stderr, "REQ1\n");
-				char buf1[12];
-				res=logsys_tx_get_status(logsys, buf1);
+				LogsysStatus status={0};
+				res=logsys_tx_get_status(logsys, &status);
 				if(res<0)
 					fprintf(stderr, "Failed! %d\n", res);
-				fprintf(stderr, "Got "); print_buf(buf1, 12); fprintf(stderr, "\n");
+				fprintf(stderr, "Got "); print_buf(&status, sizeof(status)); fprintf(stderr, "\n");
 				break;
 			case '4':
 				fprintf(stderr, "REQ4\n");
-				char buf4[4];
-				res=logsys_tx_clk(logsys, buf4);
+				LogsysClkStatus clkStatus={0};
+				res=logsys_tx_clk_status(logsys, &clkStatus);
 				if(res<0)
 					fprintf(stderr, "Failed! %d\n", res);
-				fprintf(stderr, "Got "); print_buf(buf4, 4); fprintf(stderr, "\n");
+				fprintf(stderr, "Got "); print_buf(&clkStatus, sizeof(clkStatus)); fprintf(stderr, "\n");
 				break;
 			case '2':
 				fprintf(stderr, "REQ2\n");
-				char buf2[21], ch;
-				res=logsys_tx_pwr_limit(logsys, &ch, buf2);
+				char buf2[21];
+				LogsysPwrLimit limit={0};
+				res=logsys_tx_get_pwr_limit(logsys, &limit);
 				if(res<0)
 					fprintf(stderr, "Failed! %d\n", res);
-				fprintf(stderr, "Got %02X ", ch); print_buf(buf2, 21); fprintf(stderr, "\n");
+				res=logsys_tx_get_pwr_corr(logsys, buf2);
+				if(res<0)
+					fprintf(stderr, "Failed! %d\n", res);
+				fprintf(stderr, "Got %02X ", limit); print_buf(buf2, 21); fprintf(stderr, "\n");
 				break;
 			case '+':
 				fprintf(stderr, "Vcc ON\n");

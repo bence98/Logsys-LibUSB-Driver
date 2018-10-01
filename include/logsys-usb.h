@@ -3,9 +3,6 @@
 
 #include "logsys-common.h"
 
-#define LOGSYS_VID 0x03eb
-#define LOGSYS_PID 0xf0ff
-
 //interface number
 #define LOGSYS_IFN_DEV 0
 #define LOGSYS_IFN_COM 1
@@ -28,16 +25,29 @@ void logsys_usb_close(libusb_device_handle* dev);
 int logsys_tx_get_status(libusb_device_handle* dev, /*out*/LogsysStatus* data);
 //will trigger -EOVERFLOW (-8)
 //data -> char[4]
-int logsys_tx_clk(libusb_device_handle* dev, /*out*/char* data);
+int logsys_tx_clk_status(libusb_device_handle* dev, /*out*/LogsysClkStatus* data);
+int logsys_clk_start(libusb_device_handle* dev, int freqKHz);
+int logsys_clk_stop(libusb_device_handle* dev, bool* was_running);
+
 //will trigger -EPIPE (-9)
-//data -> char[1]
-int logsys_tx_reset(libusb_device_handle* dev, /*out*/char* data);
-//unknown operation, looks like some preamble (maybe signals whether LogSYS GUI is running?)
-//sends a request#2 value=4
-//ch -> char[1] (usually =0)
-//buf -> char[21]
-int logsys_tx_pwr_limit(libusb_device_handle* dev, /*out*/char* ch, /*out*/char* buf);
+int logsys_tx_set_reset(libusb_device_handle* dev, bool reset, /*out*/bool* success);
+int logsys_tx_get_reset(libusb_device_handle* dev, /*out*/bool* reset);
+
+int logsys_tx_get_pwr_limit(libusb_device_handle* dev, /*out*/LogsysPwrLimit* limit);
+int logsys_tx_set_pwr_limit(libusb_device_handle* dev, LogsysPwrLimit limit);
+//correction coefficients
+//TODO: parsing unimplemented!
+//ch -> char[21]
+int logsys_tx_get_pwr_corr(libusb_device_handle* dev, /*out*/char* ch);
+
 int logsys_tx_set_vcc(libusb_device_handle* dev, bool vcc);
+int logsys_tx_get_vcc(libusb_device_handle* dev, /*out*/ bool* vcc);
+
+//get & set reverse current tolerance. Values in milliamps
+//TODO: unimplemented!
+int logsys_tx_det_rev_curr(libusb_device_handle* dev, double* mAmps);
+int logsys_tx_set_rev_curr(libusb_device_handle* dev, double mAmps);
+
 //I've taken a WildAssGuess as to what the parameters may be
 //num_boards -> char[1]: number of JTAG devices on the chain
 //jtag_dev -> char[2]: some info about the JTAG device (FPGA model?)
