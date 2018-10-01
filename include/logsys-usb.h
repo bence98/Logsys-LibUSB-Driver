@@ -23,8 +23,7 @@ void logsys_usb_close(libusb_device_handle* dev);
 /*async*/ bool logsys_hotplug_enable(libusb_hotplug_event evt_type, libusb_hotplug_callback_fn callback, /*out*/libusb_hotplug_callback_handle* hndl);
 
 int logsys_tx_get_status(libusb_device_handle* dev, /*out*/LogsysStatus* data);
-//will trigger -EOVERFLOW (-8)
-//data -> char[4]
+
 int logsys_tx_clk_status(libusb_device_handle* dev, /*out*/LogsysClkStatus* data);
 int logsys_clk_start(libusb_device_handle* dev, int freqKHz);
 int logsys_clk_stop(libusb_device_handle* dev, bool* was_running);
@@ -45,7 +44,7 @@ int logsys_tx_get_vcc(libusb_device_handle* dev, /*out*/ bool* vcc);
 
 //get & set reverse current tolerance. Values in milliamps
 //TODO: unimplemented!
-int logsys_tx_det_rev_curr(libusb_device_handle* dev, double* mAmps);
+int logsys_tx_get_rev_curr(libusb_device_handle* dev, double* mAmps);
 int logsys_tx_set_rev_curr(libusb_device_handle* dev, double mAmps);
 
 //I've taken a WildAssGuess as to what the parameters may be

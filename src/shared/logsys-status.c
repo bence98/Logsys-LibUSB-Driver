@@ -8,18 +8,18 @@ double logsys_get_vcc_out(LogsysStatus status){
 }
 
 double logsys_get_vjtag_out(LogsysStatus status){
-	short adcData=((status.vJtagRefH<<8)&status.vJtagRefL)&((1<<11)-1);
+	short adcData=((status.vJtagRefH<<8)|status.vJtagRefL)&((1<<11)-1);
 	return (2.56*5/1023)*adcData;
 }
 
 double logsys_get_vio_out(LogsysStatus status){
-	short adcData=((status.vIoRefH<<8)&status.vIoRefL)&((1<<11)-1);
+	short adcData=((status.vIoRefH<<8)|status.vIoRefL)&((1<<11)-1);
 	return (2.56*5/1023)*adcData;
 }
 
 double logsys_get_current_ma(LogsysStatus status){
-	short adcData10=((status.iOutH<<14>>6)&status.iOutL),
-		adcData200=((status.iOutDetailH<<14>>6)&status.iOutDetailL);
+	short adcData10=((status.iOutH<<14>>6)|status.iOutL),
+		adcData200=((status.iOutDetailH<<14>>6)|status.iOutDetailL);
 	return (2560/(512*200*.2))*adcData200+(2560/(512*10*.2))*adcData10;
 }
 
