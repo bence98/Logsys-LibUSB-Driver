@@ -19,4 +19,8 @@ typedef enum{
 	L450mA, L700mA, L950mA
 } LogsysPwrLimit;
 
+typedef enum{
+	NONE, JTAG_RW, JTAG_CHK, SPI, I2C, PIC
+} LogsysFunction;
+
 #endif //_LOGSYSDRV_COMMON_H

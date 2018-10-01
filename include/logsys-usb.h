@@ -25,6 +25,7 @@ void logsys_usb_close(libusb_device_handle* dev);
 int logsys_tx_get_status(libusb_device_handle* dev, /*out*/LogsysStatus* data);
 
 int logsys_tx_clk_status(libusb_device_handle* dev, /*out*/LogsysClkStatus* data);
+//TODO: unimplemented!
 int logsys_clk_start(libusb_device_handle* dev, int freqKHz);
 int logsys_clk_stop(libusb_device_handle* dev, bool* was_running);
 
@@ -43,13 +44,12 @@ int logsys_tx_set_vcc(libusb_device_handle* dev, bool vcc);
 int logsys_tx_get_vcc(libusb_device_handle* dev, /*out*/ bool* vcc);
 
 //get & set reverse current tolerance. Values in milliamps
-//TODO: unimplemented!
 int logsys_tx_get_rev_curr(libusb_device_handle* dev, double* mAmps);
 int logsys_tx_set_rev_curr(libusb_device_handle* dev, double mAmps);
 
-//I've taken a WildAssGuess as to what the parameters may be
-//num_boards -> char[1]: number of JTAG devices on the chain
-//jtag_dev -> char[2]: some info about the JTAG device (FPGA model?)
+int logsys_tx_get_active_func(libusb_device_handle* dev, /*out*/LogsysFunction* func);
+
+//This method is not in the docs ?!
 int logsys_tx_scan_jtag(libusb_device_handle* dev, /*out*/char* num_boards, /*out*/char* jtag_dev);
 
 #endif //_LOGSYSDRV_USB_H
