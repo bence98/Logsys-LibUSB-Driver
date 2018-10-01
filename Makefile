@@ -2,7 +2,7 @@ CC=gcc
 CFLAGS=-I./include -g
 LDFLAGS=$(shell pkg-config --libs libusb-1.0)
 
-OBJS_SO=build/tmp/shared/logsys-usb.o
+OBJS_SO=build/tmp/shared/logsys-usb.o build/tmp/shared/logsys-status.o
 
 all: build/logsys-drv.so
 
