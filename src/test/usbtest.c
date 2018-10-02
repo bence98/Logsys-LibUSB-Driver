@@ -17,7 +17,7 @@ int main(void){
 		return 1;
 	}
 	
-	libusb_device_handle* logsys=logsys_usb_open();
+	libusb_device_handle* logsys=logsys_usb_open(NULL);
 	if(logsys==NULL){
 		fprintf(stderr, "USB open error\n");
 		logsys_usb_end();
@@ -100,14 +100,14 @@ int main(void){
 				if(res<0)
 					fprintf(stderr, "Failed! %d\n", res);
 				break;
-				case '?':
-				fprintf(stderr, "JTAG scan\n");
-				char jtag[2], num;
-				res=logsys_tx_scan_jtag(logsys, &num, jtag);
-				if(res<0)
-					fprintf(stderr, "Failed! %d\n", res);
-				fprintf(stderr, "Got %02X ", num); print_buf(jtag, 2); fprintf(stderr, "\n");
-				break;
+// 			case '?':
+// 				fprintf(stderr, "JTAG scan\n");
+// 				char jtag[2], num;
+// 				res=logsys_tx_scan_jtag(logsys, &num, jtag);
+// 				if(res<0)
+// 					fprintf(stderr, "Failed! %d\n", res);
+// 				fprintf(stderr, "Got %02X ", num); print_buf(jtag, 2); fprintf(stderr, "\n");
+// 				break;
 			case 'q':
 				logsys_usb_close(logsys);
 				logsys_usb_end();

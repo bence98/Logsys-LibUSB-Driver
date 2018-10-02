@@ -3,22 +3,25 @@
 #include <stdlib.h>
 #include "logsys-usb.h"
 
-bool libusb_was_init=false;
+bool logsys_was_init=false;
 
 bool logsys_usb_init(){
 	if(libusb_init(NULL)!=0) return false;
-	return libusb_was_init=true;
+	return logsys_was_init=true;
 }
 
 bool logsys_usb_end(){
 	libusb_exit(NULL);
+	logsys_was_init=false;
 	return true;
 }
 
-libusb_device_handle* logsys_usb_open(){
-	if(!libusb_was_init&&!logsys_usb_init())
+libusb_device_handle* logsys_usb_open(libusb_device* pDev){
+	if(!logsys_was_init&&!logsys_usb_init())
 		return NULL;
-	libusb_device_handle* dev=libusb_open_device_with_vid_pid(NULL, LOGSYS_VID, LOGSYS_PID);
+	libusb_device_handle* dev;
+	if(pDev==NULL) dev=libusb_open_device_with_vid_pid(NULL, LOGSYS_VID, LOGSYS_PID);
+	else libusb_open(pDev, &dev);
 	if(dev!=NULL){
 		libusb_claim_interface(dev, LOGSYS_IFN_DEV);
 		libusb_claim_interface(dev, LOGSYS_IFN_COM);
@@ -33,7 +36,7 @@ void logsys_usb_close(libusb_device_handle* dev){
 }
 
 bool logsys_hotplug_enable(libusb_hotplug_event evt, libusb_hotplug_callback_fn cb, libusb_hotplug_callback_handle* hndl){
-	if(!libusb_was_init&&!logsys_usb_init())
+	if(!logsys_was_init&&!logsys_usb_init())
 		return false;
 	int resp=libusb_hotplug_register_callback(NULL, evt, 0, LOGSYS_VID, LOGSYS_PID, LIBUSB_HOTPLUG_MATCH_ANY, cb, NULL, hndl);
 	return resp==LIBUSB_SUCCESS;
@@ -102,22 +105,28 @@ int logsys_tx_get_active_func(libusb_device_handle* dev, LogsysFunction* func){
 	return resp;
 }
 
-int logsys_tx_scan_jtag(libusb_device_handle* dev, char* num_boards, char* jtag_dev){
+int logsys_tx_scan_jtag(libusb_device_handle* dev, bool* ready, char* jtag_dev){
 	//so I have not the slightest clue here
-	//but we read what appears to be a device count
-	int resp=libusb_control_transfer(dev, LOGSYS_REQTYP_IN,  16, 0x0001, 0, num_boards, 1, 0);
+	//but I think this is a query to make sure the endpoint is ready
+	int resp=libusb_control_transfer(dev, LOGSYS_REQTYP_IN,  16, 0x0001, 0, &ready, 1, 0);
 	if(resp<0) return resp;
+	if(!ready) return -1;
 	
 	//now we un-halt two endpoints
-	libusb_clear_halt(dev, 1);
-	libusb_clear_halt(dev, 130);
+	libusb_clear_halt(dev, LOGSYS_OUT_EP1);
+	libusb_clear_halt(dev, LOGSYS_IN_EP2);
 	
 	//we begin JTAG transmission?
 	resp=libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 18, 0, 0, NULL, 0, 0);
 	if(resp<0) return resp;
 	//we read 2 bytes
-	resp=libusb_control_transfer(dev, LOGSYS_REQTYP_IN,  3, 0x0001, 0, jtag_dev, 2, 0);
+	resp=libusb_control_transfer(dev, LOGSYS_REQTYP_IN,  3, 0, 0, jtag_dev, 2, 0);
 	if(resp<0) return resp;
+	
+	//TODO: here are some bulk transfers
+	char tmp[]={0x87, 0xff, 0x83, 0x02};
+	libusb_bulk_transfer(dev, LOGSYS_OUT_EP1, tmp, 4, NULL, 0);
+	
 	//we end JTAG transmission?
 	return libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 17, 0, 0, NULL, 0, 0);
 }

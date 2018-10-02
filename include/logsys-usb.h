@@ -6,9 +6,18 @@
 //interface number
 #define LOGSYS_IFN_DEV 0
 #define LOGSYS_IFN_COM 1
-//interface descriptor
-#define LOGSYS_IFD_DEV 2
-#define LOGSYS_IFD_COM 3
+//endpoints: - interface0
+//non-interrupting function endpoints
+//see also: LogsysFunction
+#define LOGSYS_OUT_EP1 0x01
+#define LOGSYS_IN_EP2  0x82
+//interrupting function endpoints
+#define LOGSYS_OUT_EP3 0x03
+#define LOGSYS_IN_EP4  0x84
+// - interface1
+//COM endpoints
+#define LOGSYS_OUT_EP5 0x05
+#define LOGSYS_IN_EP6  0x86
 
 #define LOGSYS_REQTYP_IN  0xc0
 #define LOGSYS_REQTYP_OUT 0x40
@@ -17,7 +26,7 @@
 
 bool logsys_usb_init();
 bool logsys_usb_end();
-libusb_device_handle* logsys_usb_open();
+libusb_device_handle* logsys_usb_open(libusb_device* pDev);
 void logsys_usb_close(libusb_device_handle* dev);
 //don't forget to `libusb_hotplug_deregister_callback()`!
 /*async*/ bool logsys_hotplug_enable(libusb_hotplug_event evt_type, libusb_hotplug_callback_fn callback, /*out*/libusb_hotplug_callback_handle* hndl);
@@ -50,6 +59,6 @@ int logsys_tx_set_rev_curr(libusb_device_handle* dev, double mAmps);
 int logsys_tx_get_active_func(libusb_device_handle* dev, /*out*/LogsysFunction* func);
 
 //This method is not in the docs ?!
-int logsys_tx_scan_jtag(libusb_device_handle* dev, /*out*/char* num_boards, /*out*/char* jtag_dev);
+int logsys_tx_scan_jtag(libusb_device_handle* dev, /*out*/bool* ready, /*out*/char* jtag_dev);
 
 #endif //_LOGSYSDRV_USB_H
