@@ -34,8 +34,7 @@ void logsys_usb_close(libusb_device_handle* dev);
 int logsys_tx_get_status(libusb_device_handle* dev, /*out*/LogsysStatus* data);
 
 int logsys_tx_clk_status(libusb_device_handle* dev, /*out*/LogsysClkStatus* data);
-//TODO: unimplemented!
-int logsys_clk_start(libusb_device_handle* dev, int freqKHz);
+int logsys_clk_start(libusb_device_handle* dev, int freqKHz, bool* success);
 int logsys_clk_stop(libusb_device_handle* dev, bool* was_running);
 
 //will trigger -EPIPE (-9)

@@ -50,6 +50,29 @@ int logsys_tx_clk_status(libusb_device_handle* dev, LogsysClkStatus* data){
 	return libusb_control_transfer(dev, LOGSYS_REQTYP_IN, 4, 0, 0x02, (char*)data, sizeof(LogsysClkStatus), 0);
 }
 
+int logsys_clk_start(libusb_device_handle* dev, int freqKHz, bool* success){
+	static int mcuFreqKHz=16000; //16 MHz
+	static double prescaler[]={1.0, 1.0/8, 1.0/64, 1.0/256, 1.0/1024};
+	
+	double error=0, minError=freqKHz, newFreqKHz;
+	short prescalerVal, perRegVal;
+	
+	for(int i=0;i<5;i++){
+		int tryPerRegVal=(mcuFreqKHz*prescaler[i]/(2*freqKHz));
+		if(tryPerRegVal<0||tryPerRegVal>65535) continue;
+		newFreqKHz=mcuFreqKHz*prescaler[i]/(tryPerRegVal*2);
+		error=abs(freqKHz-newFreqKHz);
+		if(error<minError){
+			minError=error;
+			prescalerVal=i+1;
+			perRegVal=tryPerRegVal-1;
+		}
+		if(error==0) break;
+	}
+	
+	return libusb_control_transfer(dev, LOGSYS_REQTYP_IN, 4, perRegVal, prescalerVal<<8, (char*)success, 1, 0);
+}
+
 int logsys_clk_stop(libusb_device_handle* dev, bool* was_running){
 	return libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 4, 0, 0x0001, (char*)was_running, 1, 0);
 }
@@ -108,7 +131,7 @@ int logsys_tx_get_active_func(libusb_device_handle* dev, LogsysFunction* func){
 int logsys_tx_scan_jtag(libusb_device_handle* dev, bool* ready, char* jtag_dev){
 	//so I have not the slightest clue here
 	//but I think this is a query to make sure the endpoint is ready
-	int resp=libusb_control_transfer(dev, LOGSYS_REQTYP_IN,  16, 0x0001, 0, &ready, 1, 0);
+	int resp=libusb_control_transfer(dev, LOGSYS_REQTYP_IN,  16, 0x0001, 0, (char*)ready, 1, 0);
 	if(resp<0) return resp;
 	if(!ready) return -1;
 	
