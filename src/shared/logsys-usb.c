@@ -51,7 +51,7 @@ int logsys_tx_clk_status(libusb_device_handle* dev, LogsysClkStatus* data){
 }
 
 int logsys_clk_start(libusb_device_handle* dev, int freqKHz, bool* success){
-	static int mcuFreqKHz=16000; //16 MHz
+	static double mcuFreqKHz=16000; //16 MHz
 	static double prescaler[]={1.0, 1.0/8, 1.0/64, 1.0/256, 1.0/1024};
 	
 	double error=0, minError=freqKHz, newFreqKHz;

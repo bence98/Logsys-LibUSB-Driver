@@ -13,6 +13,9 @@ double logsys_get_vio_out(LogsysStatus status);
 //flowing current in milliamps
 double logsys_get_current_ma(LogsysStatus status);
 
+//clock frequency in kHz
+double logsys_get_clk_freq_khz(LogsysClkStatus status);
+
 //VCC on?
 bool logsys_is_vcc(LogsysStatus status);
 //Overcurrent shutdown?
