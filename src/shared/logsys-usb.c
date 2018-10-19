@@ -153,3 +153,15 @@ int logsys_tx_scan_jtag(libusb_device_handle* dev, bool* ready, char* jtag_dev){
 	//we end JTAG transmission?
 	return libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 17, 0, 0, NULL, 0, 0);
 }
+
+int logsys_jtag_get_mode(libusb_device_handle* dev, /*out*/char* mode){
+	return libusb_control_transfer(dev, LOGSYS_REQTYP_IN, 19, 0, 0, mode, 1, 0);
+}
+
+int logsys_jtag_set_mode(libusb_device_handle* dev, char mode){
+	return libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 19, mode, 0, NULL, 0, 0);
+}
+
+int logsys_jtag_check_error(libusb_device_handle* dev, /*out*/bool* error){
+	return libusb_control_transfer(dev, LOGSYS_REQTYP_IN,  20, 0, 0, (char*)error, 1, 0);
+}
