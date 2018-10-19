@@ -57,9 +57,12 @@ int logsys_tx_set_rev_curr(libusb_device_handle* dev, double mAmps);
 
 int logsys_tx_get_active_func(libusb_device_handle* dev, /*out*/LogsysFunction* func);
 
+int logsys_tx_jtag_begin(libusb_device_handle* dev, /*out*/bool* ready, /*out*/char* jtag_dev);
+int logsys_tx_jtag_end(libusb_device_handle* dev);
+
 //This method is not in the docs ?!
 //FIXME: do NOT use this method!
-int logsys_tx_scan_jtag(libusb_device_handle* dev, /*out*/bool* ready, /*out*/char* jtag_dev);
+int logsys_scan_jtag(libusb_device_handle* dev, /*out*/bool* ready, /*out*/char* jtag_dev);
 //I *think* these two functions select between Write & Compare and Write & Echo modes
 #define MODE_CMP 2
 int logsys_jtag_get_mode(libusb_device_handle* dev, /*out*/char* mode);

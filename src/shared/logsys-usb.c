@@ -128,7 +128,7 @@ int logsys_tx_get_active_func(libusb_device_handle* dev, LogsysFunction* func){
 	return resp;
 }
 
-int logsys_tx_scan_jtag(libusb_device_handle* dev, bool* ready, char* jtag_dev){
+int logsys_jtag_begin(libusb_device_handle* dev, /*out*/bool* ready, /*out*/char* jtag_dev){
 	//so I have not the slightest clue here
 	//but I think this is a query to make sure the endpoint is ready
 	int resp=libusb_control_transfer(dev, LOGSYS_REQTYP_IN,  16, 0x0001, 0, (char*)ready, 1, 0);
@@ -143,15 +143,18 @@ int logsys_tx_scan_jtag(libusb_device_handle* dev, bool* ready, char* jtag_dev){
 	resp=libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 18, 0, 0, NULL, 0, 0);
 	if(resp<0) return resp;
 	//we read 2 bytes
-	resp=libusb_control_transfer(dev, LOGSYS_REQTYP_IN,  3, 0, 0, jtag_dev, 2, 0);
-	if(resp<0) return resp;
-	
-	//TODO: here are some bulk transfers
-	char tmp[]={0x87, 0xff, 0x83, 0x02};
-	libusb_bulk_transfer(dev, LOGSYS_OUT_EP1, tmp, 4, NULL, 0);
-	
+	return libusb_control_transfer(dev, LOGSYS_REQTYP_IN,  3, 0, 0, jtag_dev, 2, 0);
+}
+
+int logsys_jtag_end(libusb_device_handle* dev){
 	//we end JTAG transmission?
 	return libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 17, 0, 0, NULL, 0, 0);
+}
+
+int logsys_jtag_scan(libusb_device_handle* dev, bool* ready, char* jtag_dev){
+	//TODO: there are more bulk transfers
+	char tmp[]={0x87, 0xff, 0x83, 0x02};
+	return libusb_bulk_transfer(dev, LOGSYS_OUT_EP1, tmp, 4, NULL, 0);
 }
 
 int logsys_jtag_get_mode(libusb_device_handle* dev, /*out*/char* mode){
