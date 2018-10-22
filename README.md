@@ -14,6 +14,7 @@ This repository contains the Linux-compatible driver for the [LOGSYS](http://log
   * `hotplug-test`: Prints 'Logsys [dis]connected' when you [un]plug the device
   * `logsys-test`: Communication protocol test. Exit with the `quit` command or with CTRL+D (EOF). Do not kill with SIGINT (CTRL+C)!
 * Using the driver in your app: In this stage, I wouldn't recommend. But if you really wanted to, just link against `logsys-drv.so`
+* Allowing an unprivileged user to access the device (recommended): run `udev-rule.sh` as root
 
 ## API
 
