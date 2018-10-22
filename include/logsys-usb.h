@@ -62,7 +62,7 @@ int logsys_tx_jtag_end(libusb_device_handle* dev);
 
 //This method is not in the docs ?!
 //FIXME: do NOT use this method!
-int logsys_scan_jtag(libusb_device_handle* dev, /*out*/bool* ready, /*out*/char* jtag_dev);
+int logsys_jtag_scan(libusb_device_handle* dev);
 //I *think* these two functions select between Write & Compare and Write & Echo modes
 #define MODE_CMP 2
 int logsys_jtag_get_mode(libusb_device_handle* dev, /*out*/char* mode);

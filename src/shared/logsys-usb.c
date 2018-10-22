@@ -151,7 +151,7 @@ int logsys_jtag_end(libusb_device_handle* dev){
 	return libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 17, 0, 0, NULL, 0, 0);
 }
 
-int logsys_jtag_scan(libusb_device_handle* dev, bool* ready, char* jtag_dev){
+int logsys_jtag_scan(libusb_device_handle* dev){
 	//TODO: there are more bulk transfers
 	char tmp[]={0x87, 0xff, 0x83, 0x02};
 	return libusb_bulk_transfer(dev, LOGSYS_OUT_EP1, tmp, 4, NULL, 0);
