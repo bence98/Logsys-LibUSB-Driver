@@ -12,12 +12,12 @@ This repository contains the Linux-compatible driver for the [LOGSYS](http://log
 * `make`: The shared object will be created in the `build` folder
 * tests: `make test`: Test binaries will be created in the `build` folder
   * `hotplug-test`: Prints 'Logsys [dis]connected' when you [un]plug the device
-  * `logsys-test`: Communication protocol test. Commands consist of `124+-` characters. Exit with `q`, then ENTER
+  * `logsys-test`: Communication protocol test. Exit with the `quit` command or with CTRL+D (EOF). Do not kill with SIGINT (CTRL+C)!
 * Using the driver in your app: In this stage, I wouldn't recommend. But if you really wanted to, just link against `logsys-drv.so`
 
 ## API
 
-See the `include` folder & the tests. More documentation coming soon.
+See the `include` folder & the tests or the [Wiki page](https://github.com/bence98/Logsys-LibUSB-Driver/wiki/Legacy:API).
 
 ## Notes
 
