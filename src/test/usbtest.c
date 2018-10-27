@@ -8,7 +8,7 @@
 
 void print_buf(char* buf, int len){
 	for(int i=0;i<len;i++)
-		fprintf(stderr, "%02X", buf[i]);
+		printf("%02X", buf[i]);
 }
 
 int main(void){
@@ -37,8 +37,8 @@ int main(void){
 					continue;
 				}
 				
-				fprintf(stderr, " VCC | V_j | Vio |  I  |*+-|J12RSNI\n");
-				fprintf(stderr, "%5.2f|%5.2f|%5.2f|%5.2f|%c%c%c|%c%c%c%c%c%c%c\n",
+				printf(" VCC | V_j | Vio |  I  |*+-|J12RSNI\n");
+				printf("%5.2f|%5.2f|%5.2f|%5.2f|%c%c%c|%c%c%c%c%c%c%c\n",
 					logsys_get_vcc_out(status),
 					logsys_get_vjtag_out(status),
 					logsys_get_vio_out(status),
@@ -63,11 +63,10 @@ int main(void){
 					continue;
 				}
 				if(clkStatus.active)
-					fprintf(stderr, "Period register(LE): %02X %02X, prescaler: %02X\n", clkStatus.periodRegL, clkStatus.periodRegH, clkStatus.prescaler);
+					printf("Period register(LE): %02X %02X, prescaler: %02X\n", clkStatus.periodRegL, clkStatus.periodRegH, clkStatus.prescaler);
 				else
-					fprintf(stderr, "Clock is off\n");
+					printf("Clock is off\n");
 		}else if(strncmp(cmd, "pwrlim get", sizeof("pwrlim get")-1)==0){
-				fprintf(stderr, "Get power limit:\n");
 				char buf2[21];
 				LogsysPwrLimit limit={0};
 				res=logsys_tx_get_pwr_limit(logsys, &limit);
@@ -75,7 +74,7 @@ int main(void){
 					fprintf(stderr, "Failed! %d\n", res);
 					continue;
 				}
-				fprintf(stderr, "Max power: %d mA\n",
+				printf("Max power: %d mA\n",
 					limit==L450mA?450:limit==L700mA?700:limit==L950mA?950:-1
 				);
 				res=logsys_tx_get_pwr_corr(logsys, buf2);
@@ -83,7 +82,7 @@ int main(void){
 					fprintf(stderr, "Failed! %d\n", res);
 					continue;
 				}
-				fprintf(stderr, "Got "); print_buf(buf2, 21); fprintf(stderr, "\n");
+				printf("Got "); print_buf(buf2, 21); printf("\n");
 		}else if(strncmp(cmd, "vcc on", sizeof("vcc on")-1)==0){
 				res=logsys_tx_set_vcc(logsys, true);
 				if(res<0)
