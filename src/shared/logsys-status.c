@@ -68,3 +68,30 @@ bool logsys_is_end_ni_used(LogsysStatus status){
 bool logsys_is_end_int_used(LogsysStatus status){
 	return status.flagPin&64;
 }
+
+LogsysClkStatus logsys_create_clk_status(double freqHz, double divisor){
+	LogsysClkStatus status={0};
+	static double mcuFreqHz=16000000; //16 MHz
+	static double prescaler[]={1.0, 1.0/8, 1.0/64, 1.0/256, 1.0/1024};
+	
+	double error=0, minError=freqHz, newFreqHz;
+	short prescalerVal, perRegVal;
+	
+	for(int i=0;i<5;i++){
+		int tryPerRegVal=(mcuFreqHz*prescaler[i]/(2*freqHz));
+		if(tryPerRegVal<0||tryPerRegVal>65535) continue;
+		newFreqHz=mcuFreqHz*prescaler[i]/(tryPerRegVal*2);
+		error=abs(freqHz-newFreqHz);
+		if(error<minError){
+			minError=error;
+			prescalerVal=i+1;
+			perRegVal=tryPerRegVal-1;
+		}
+		if(error==0) break;
+	}
+	
+	status.periodRegL=perRegVal & 0xff;
+	status.periodRegH=(perRegVal & 0xff00) >> 8;
+	status.prescaler=prescalerVal;
+	return status;
+}

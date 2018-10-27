@@ -51,26 +51,8 @@ int logsys_tx_clk_status(libusb_device_handle* dev, LogsysClkStatus* data){
 }
 
 int logsys_clk_start(libusb_device_handle* dev, int freqKHz, bool* success){
-	static double mcuFreqKHz=16000; //16 MHz
-	static double prescaler[]={1.0, 1.0/8, 1.0/64, 1.0/256, 1.0/1024};
-	
-	double error=0, minError=freqKHz, newFreqKHz;
-	short prescalerVal, perRegVal;
-	
-	for(int i=0;i<5;i++){
-		int tryPerRegVal=(mcuFreqKHz*prescaler[i]/(2*freqKHz));
-		if(tryPerRegVal<0||tryPerRegVal>65535) continue;
-		newFreqKHz=mcuFreqKHz*prescaler[i]/(tryPerRegVal*2);
-		error=abs(freqKHz-newFreqKHz);
-		if(error<minError){
-			minError=error;
-			prescalerVal=i+1;
-			perRegVal=tryPerRegVal-1;
-		}
-		if(error==0) break;
-	}
-	
-	return libusb_control_transfer(dev, LOGSYS_REQTYP_IN, 4, perRegVal, prescalerVal<<8, (char*)success, 1, 0);
+	LogsysClkStatus status=logsys_create_clk_status(freqKHz*1000.0, 2);
+	return libusb_control_transfer(dev, LOGSYS_REQTYP_IN, 4, status.periodRegL|(status.periodRegH<<8), status.prescaler<<8, (char*)success, 1, 0);
 }
 
 int logsys_clk_stop(libusb_device_handle* dev, bool* was_running){
@@ -128,10 +110,8 @@ int logsys_tx_get_active_func(libusb_device_handle* dev, LogsysFunction* func){
 	return resp;
 }
 
-int logsys_jtag_begin(libusb_device_handle* dev, /*out*/bool* ready, /*out*/char* jtag_dev){
-	//so I have not the slightest clue here
-	//but I think this is a query to make sure the endpoint is ready
-	int resp=libusb_control_transfer(dev, LOGSYS_REQTYP_IN,  16, 0x0001, 0, (char*)ready, 1, 0);
+int logsys_tx_jtag_begin(libusb_device_handle* dev, LogsysJtagMode mode, /*out*/bool* ready){
+	int resp=libusb_control_transfer(dev, LOGSYS_REQTYP_IN,  16, mode, 0, (char*)ready, 1, 0);
 	if(resp<0) return resp;
 	if(!ready) return -1;
 	
@@ -143,25 +123,66 @@ int logsys_jtag_begin(libusb_device_handle* dev, /*out*/bool* ready, /*out*/char
 	resp=libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 18, 0, 0, NULL, 0, 0);
 	if(resp<0) return resp;
 	//we read 2 bytes
-	return libusb_control_transfer(dev, LOGSYS_REQTYP_IN,  3, 0, 0, jtag_dev, 2, 0);
+	//NOTE to self: it looks like `logsys_tx_get_active_func()`, except the wLength
+	char tmp[2];
+	resp=libusb_control_transfer(dev, LOGSYS_REQTYP_IN,  3, 0, 0, tmp, 2, 0);
+	//this was in the disassembly of L-GUI, no clue why
+	*ready=*ready&&tmp[0]==1&&tmp[1]!=0;
+	return resp;
 }
 
-int logsys_jtag_end(libusb_device_handle* dev){
-	//we end JTAG transmission?
+int logsys_tx_jtag_end(libusb_device_handle* dev){
 	return libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 17, 0, 0, NULL, 0, 0);
 }
 
-int logsys_jtag_scan(libusb_device_handle* dev){
-	//TODO: there are more bulk transfers
-	char tmp[]={0x87, 0xff, 0x83, 0x02};
-	return libusb_bulk_transfer(dev, LOGSYS_OUT_EP1, tmp, 4, NULL, 0);
+int logsys_tx_serial_begin(libusb_device_handle* dev, bool* success){
+	LogsysClkStatus status=logsys_create_clk_status(10, 4);
+	int resp=libusb_control_transfer(dev, LOGSYS_REQTYP_IN, 96, status.periodRegL|(status.periodRegH<<8), status.prescaler, (char*)success, 1, 0);
+	if(resp<0) return resp;
+	if(*success){
+		resp=libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 98, 0, 0, NULL, 0, 0);
+	}
+	return resp;
 }
 
-int logsys_jtag_get_mode(libusb_device_handle* dev, /*out*/char* mode){
-	return libusb_control_transfer(dev, LOGSYS_REQTYP_IN, 19, 0, 0, mode, 1, 0);
+int logsys_tx_serial_end(libusb_device_handle* dev){
+	return libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 97, 0, 0, NULL, 0, 0);
 }
 
-int logsys_jtag_set_mode(libusb_device_handle* dev, char mode){
+int logsys_jtag_scan(libusb_device_handle* dev, /*out*/uint32_t jtag_devs[], int max_devs, /*out*/int* found_devs){
+	char req_preamb[]={0x87, 0xff, 0x83, 0x02},
+		 req_get_id[]={0x07, 0xff, 0x07, 0xff, 0x07, 0xff, 0x07, 0xff},
+		 req_postamb[]={0x87, 0xff},
+		 read[8];
+	
+	int resp=libusb_bulk_transfer(dev, LOGSYS_OUT_EP1, req_preamb, sizeof(req_preamb), NULL, 0);
+	if(resp<0) return resp;
+	resp=libusb_bulk_transfer(dev, LOGSYS_IN_EP2, read, sizeof(req_preamb), NULL, 0);
+	if(resp<0) return resp;
+	
+	for(*found_devs=0;*found_devs<max_devs;*found_devs++){
+		resp=libusb_bulk_transfer(dev, LOGSYS_OUT_EP1, req_get_id, sizeof(req_get_id), NULL, 0);
+		if(resp<0) break;
+		resp=libusb_bulk_transfer(dev, LOGSYS_IN_EP2, read, sizeof(req_get_id), NULL, 0);
+		if(resp<0) break;
+		uint32_t id=read[0]|(read[2]<<8)|(read[4]<<16)|(read[6]<<24);
+		if(id==0||id==-1) break;
+		jtag_devs[*found_devs]=id;
+	}
+	resp=libusb_bulk_transfer(dev, LOGSYS_OUT_EP1, req_postamb, sizeof(req_postamb), NULL, 0);
+	if(resp<0) return resp;
+	resp=libusb_bulk_transfer(dev, LOGSYS_IN_EP2, read, sizeof(req_postamb), NULL, 0);
+	return resp;
+}
+
+int logsys_jtag_get_mode(libusb_device_handle* dev, /*out*/LogsysJtagMode* mode){
+	char tmp;
+	int resp=libusb_control_transfer(dev, LOGSYS_REQTYP_IN, 19, 0, 0, &tmp, 1, 0);
+	if(resp==LIBUSB_SUCCESS) *mode=tmp;
+	return resp;
+}
+
+int logsys_jtag_set_mode(libusb_device_handle* dev, LogsysJtagMode mode){
 	return libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 19, mode, 0, NULL, 0, 0);
 }
 

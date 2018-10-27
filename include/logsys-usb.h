@@ -57,16 +57,18 @@ int logsys_tx_set_rev_curr(libusb_device_handle* dev, double mAmps);
 
 int logsys_tx_get_active_func(libusb_device_handle* dev, /*out*/LogsysFunction* func);
 
-int logsys_tx_jtag_begin(libusb_device_handle* dev, /*out*/bool* ready, /*out*/char* jtag_dev);
+int logsys_tx_jtag_begin(libusb_device_handle* dev, LogsysJtagMode mode, /*out*/bool* ready);
 int logsys_tx_jtag_end(libusb_device_handle* dev);
+
+int logsys_tx_serial_begin(libusb_device_handle* dev, bool* success);
+int logsys_tx_serial_end(libusb_device_handle* dev);
 
 //This method is not in the docs ?!
 //FIXME: do NOT use this method!
-int logsys_jtag_scan(libusb_device_handle* dev);
+int logsys_jtag_scan(libusb_device_handle* dev, /*out*/uint32_t jtag_devs[], int max_devs, /*out*/int* found_devs);
 //I *think* these two functions select between Write & Compare and Write & Echo modes
-#define MODE_CMP 2
-int logsys_jtag_get_mode(libusb_device_handle* dev, /*out*/char* mode);
-int logsys_jtag_set_mode(libusb_device_handle* dev, char mode);
+int logsys_jtag_get_mode(libusb_device_handle* dev, /*out*/LogsysJtagMode* mode);
+int logsys_jtag_set_mode(libusb_device_handle* dev, LogsysJtagMode mode);
 //in JTAG Write & Compare mode, the development cable checks the response and this query reads the check results 
 int logsys_jtag_check_error(libusb_device_handle* dev, /*out*/bool* error);
 

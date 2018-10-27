@@ -26,4 +26,13 @@ typedef enum{
 	NONE, JTAG_RW, JTAG_CHK, SPI, I2C, PIC
 } LogsysFunction;
 
+//Write & Echo mode: driver sends JTAG output, device sends input data back
+//Write & Compare mode: driver sends output AND expected input, device responds whether it matches
+typedef enum{
+	MODE_ECHO=1,
+	MODE_CMP
+} LogsysJtagMode;
+
+LogsysClkStatus logsys_create_clk_status(double clkFreqHz, double divisor);
+
 #endif //_LOGSYSDRV_COMMON_H

@@ -94,17 +94,29 @@ int main(void){
 					fprintf(stderr, "Failed! %d\n", res);
 		}else if(strncmp(cmd, "jtag scan", sizeof("jtag scan")-1)==0){
  				fprintf(stderr, "Do not use!\n");
-// 				char jtag[2], num;
-// 				res=logsys_tx_jtag_begin(logsys, &num, jtag);
-// 				if(res<0)
-// 					fprintf(stderr, "Begin failed! %d\n", res);
-// 				fprintf(stderr, "Got %02X ", num); print_buf(jtag, 2); fprintf(stderr, "\n");
-// 				res=logsys_jtag_scan(logsys); //FIXME: incomplete function
-// 				if(res<0)
-// 					fprintf(stderr, "Scan failed! %d\n", res);
-// 				res=logsys_tx_jtag_end(logsys, &num, jtag);
-// 				if(res<0)
-// 					fprintf(stderr, "End failed! %d\n", res);
+				bool ready;
+				res=logsys_tx_jtag_begin(logsys, MODE_ECHO, &ready);
+				if(res<0){
+					fprintf(stderr, "Begin failed! %d\n", res);
+					continue;
+				}
+				if(!ready){
+					fprintf(stderr, "JTAG unavailable\n");
+					continue;
+				}
+				uint32_t devs[16];
+				int dev_len;
+				res=logsys_jtag_scan(logsys, devs, 16, &dev_len); //FIXME: incomplete function
+				if(res<0){
+					fprintf(stderr, "Scan failed! %d\n", res);
+					continue;
+				}
+				printf("%d devices:\n", dev_len);
+				for(int i=0;i<dev_len;i++)
+					printf("  0x%.8X\n", devs[i]);
+				res=logsys_tx_jtag_end(logsys);
+				if(res<0)
+					fprintf(stderr, "End failed! %d\n", res);
 		}else if(strncmp(cmd, "quit", sizeof("quit")-1)==0){
 			break;
 		}else{
