@@ -63,8 +63,8 @@ int logsys_tx_jtag_end(libusb_device_handle* dev);
 int logsys_tx_serial_begin(libusb_device_handle* dev, bool* success);
 int logsys_tx_serial_end(libusb_device_handle* dev);
 
-//This method is not in the docs ?!
-//FIXME: do NOT use this method!
+//Performs a JTAG boundary-scan & returns the device IDs in the `jtag_devs` array and saves the number of devices in `found_devs`
+//NOTE: if there's more than `max_devs`, then only the first `max_devs` gets returned, and `found_devs` will be set to `max_devs`
 int logsys_jtag_scan(libusb_device_handle* dev, /*out*/uint32_t jtag_devs[], int max_devs, /*out*/int* found_devs);
 //I *think* these two functions select between Write & Compare and Write & Echo modes
 int logsys_jtag_get_mode(libusb_device_handle* dev, /*out*/LogsysJtagMode* mode);

@@ -93,7 +93,6 @@ int main(void){
 				if(res<0)
 					fprintf(stderr, "Failed! %d\n", res);
 		}else if(strncmp(cmd, "jtag scan", sizeof("jtag scan")-1)==0){
- 				fprintf(stderr, "Do not use!\n");
 				bool ready;
 				res=logsys_tx_jtag_begin(logsys, MODE_ECHO, &ready);
 				if(res<0){
@@ -106,7 +105,7 @@ int main(void){
 				}
 				uint32_t devs[16];
 				int dev_len;
-				res=logsys_jtag_scan(logsys, devs, 16, &dev_len); //FIXME: incomplete function
+				res=logsys_jtag_scan(logsys, devs, 16, &dev_len);
 				if(res<0){
 					fprintf(stderr, "Scan failed! %d\n", res);
 					continue;
