@@ -34,7 +34,7 @@ void logsys_usb_close(libusb_device_handle* dev);
 int logsys_tx_get_status(libusb_device_handle* dev, /*out*/LogsysStatus* data);
 
 int logsys_tx_clk_status(libusb_device_handle* dev, /*out*/LogsysClkStatus* data);
-int logsys_clk_start(libusb_device_handle* dev, int freqKHz, bool* success);
+int logsys_clk_start(libusb_device_handle* dev, int freqHz, bool* success);
 int logsys_clk_stop(libusb_device_handle* dev, bool* was_running);
 
 int logsys_tx_set_reset(libusb_device_handle* dev, bool reset, /*out*/bool* success);

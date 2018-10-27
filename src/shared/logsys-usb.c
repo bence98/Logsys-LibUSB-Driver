@@ -50,8 +50,8 @@ int logsys_tx_clk_status(libusb_device_handle* dev, LogsysClkStatus* data){
 	return libusb_control_transfer(dev, LOGSYS_REQTYP_IN, 4, 0, 0x02, (char*)data, sizeof(LogsysClkStatus), 0);
 }
 
-int logsys_clk_start(libusb_device_handle* dev, int freqKHz, bool* success){
-	LogsysClkStatus status=logsys_create_clk_status(freqKHz*1000.0, 2);
+int logsys_clk_start(libusb_device_handle* dev, int freqHz, bool* success){
+	LogsysClkStatus status=logsys_create_clk_status(freqHz, 2);
 	return libusb_control_transfer(dev, LOGSYS_REQTYP_IN, 4, status.periodRegL|(status.periodRegH<<8), status.prescaler<<8, (char*)success, 1, 0);
 }
 

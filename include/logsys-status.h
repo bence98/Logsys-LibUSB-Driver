@@ -13,8 +13,9 @@ double logsys_get_vio_out(LogsysStatus status);
 //flowing current in milliamps
 double logsys_get_current_ma(LogsysStatus status);
 
-//clock frequency in kHz
-double logsys_get_clk_freq_khz(LogsysClkStatus status);
+//clock frequency in Hz
+//`divisor` is 2 for the standard clock and 4 for the Serial port clock
+double logsys_get_clk_freq_hz(LogsysClkStatus status, double divisor);
 
 //VCC on?
 bool logsys_is_vcc(LogsysStatus status);

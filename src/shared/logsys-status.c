@@ -23,10 +23,10 @@ double logsys_get_current_ma(LogsysStatus status){
 	return (2560/(512*200*.2))*adcData200+(2560/(512*10*.2))*adcData10;
 }
 
-double logsys_get_clk_freq_khz(LogsysClkStatus status){
-	static double mcuFreqKHz=16000; //16 MHz
+double logsys_get_clk_freq_hz(LogsysClkStatus status, double divisor){
+	static double mcuFreqHz=16000000; //16 MHz
 	static double prescaler[]={1.0, 1.0/8, 1.0/64, 1.0/256, 1.0/1024};
-	return mcuFreqKHz*prescaler[status.prescaler]/(TO_WORD(status.periodRegH, status.periodRegL)*2);
+	return mcuFreqHz*prescaler[status.prescaler]/(TO_WORD(status.periodRegH, status.periodRegL)*divisor);
 }
 
 bool logsys_is_vcc(LogsysStatus status){
