@@ -37,7 +37,6 @@ int logsys_tx_clk_status(libusb_device_handle* dev, /*out*/LogsysClkStatus* data
 int logsys_clk_start(libusb_device_handle* dev, int freqKHz, bool* success);
 int logsys_clk_stop(libusb_device_handle* dev, bool* was_running);
 
-//will trigger -EPIPE (-9)
 int logsys_tx_set_reset(libusb_device_handle* dev, bool reset, /*out*/bool* success);
 int logsys_tx_get_reset(libusb_device_handle* dev, /*out*/bool* reset);
 
@@ -66,7 +65,7 @@ int logsys_tx_serial_end(libusb_device_handle* dev);
 //Performs a JTAG boundary-scan & returns the device IDs in the `jtag_devs` array and saves the number of devices in `found_devs`
 //NOTE: if there's more than `max_devs`, then only the first `max_devs` gets returned, and `found_devs` will be set to `max_devs`
 int logsys_jtag_scan(libusb_device_handle* dev, /*out*/uint32_t jtag_devs[], int max_devs, /*out*/int* found_devs);
-//I *think* these two functions select between Write & Compare and Write & Echo modes
+//select between Write & Compare and Write & Echo modes
 int logsys_jtag_get_mode(libusb_device_handle* dev, /*out*/LogsysJtagMode* mode);
 int logsys_jtag_set_mode(libusb_device_handle* dev, LogsysJtagMode mode);
 //in JTAG Write & Compare mode, the development cable checks the response and this query reads the check results 
