@@ -9,6 +9,7 @@ This repository contains the Linux-compatible driver for the [LOGSYS](http://log
 
 ## Compiling the driver
 
+* You may need to clone (http://svn.clifford.at/libxsvf/) with Subversion or git-svn
 * `make`: The shared object will be created in the `build` folder
 * tests: `make test`: Test binaries will be created in the `build` folder
   * `hotplug-test`: Prints 'Logsys [dis]connected' when you [un]plug the device

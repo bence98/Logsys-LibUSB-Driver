@@ -1,0 +1,3 @@
+[submodule "libxsvf"]
+	path = libxsvf
+	url = http://svn.clifford.at/libxsvf/

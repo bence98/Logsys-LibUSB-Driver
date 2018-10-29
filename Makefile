@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-I./include -g
+CFLAGS=-I./include -I./libxsvf -g
 LDFLAGS=$(shell pkg-config --libs libusb-1.0)
 
 OBJS_SO=build/tmp/shared/logsys-usb.o build/tmp/shared/logsys-status.o
