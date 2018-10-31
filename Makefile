@@ -2,7 +2,7 @@ CC=gcc
 CFLAGS=-I./include -I./libxsvf -g
 LDFLAGS=$(shell pkg-config --libs libusb-1.0)
 
-OBJS_SO=build/tmp/shared/logsys-usb.o build/tmp/shared/logsys-status.o
+OBJS_SO=build/tmp/shared/logsys-usb.o build/tmp/shared/logsys-status.o build/tmp/shared/xsvf.o
 
 all: build/logsys-drv.so
 
@@ -11,7 +11,7 @@ test: build/logsys-test build/hotplug-test
 clean:
 	find build -type f -delete
 
-build/logsys-drv.so: $(OBJS_SO)
+build/logsys-drv.so: $(OBJS_SO) libxsvf/libxsvf.a
 	$(CC) $(CFLAGS) $^ --shared -o $@
 
 build/logsys-test: build/tmp/test/usbtest.o build/logsys-drv.so

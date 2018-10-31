@@ -115,6 +115,10 @@ int main(void){
 				res=logsys_tx_jtag_end(logsys);
 				if(res<0)
 					fprintf(stderr, "End failed! %d\n", res);
+		}else if(strncmp(cmd, "conf svf", sizeof("conf svf")-1)==0){
+			FILE* f=fopen("/home/bence/Dokumentumok/bme/digit1/impact/sz_geektime.svf", "r");
+			logsys_jtag_dl_svf(logsys, f);
+			fclose(f);
 		}else if(strncmp(cmd, "quit", sizeof("quit")-1)==0){
 			break;
 		}else{
