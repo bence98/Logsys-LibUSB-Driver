@@ -127,7 +127,8 @@ int logsys_tx_jtag_begin(libusb_device_handle* dev, LogsysJtagMode mode, bool* r
 	char tmp[2];
 	resp=libusb_control_transfer(dev, LOGSYS_REQTYP_IN,  3, 0, 0, tmp, 2, 0);
 	//this was in the disassembly of L-GUI, no clue why
-	*ready=*ready&&tmp[0]==1&&tmp[1]!=0;
+	//edit: modified as it wouldn't start in MODE_CMP mode
+	*ready=*ready&&tmp[0]==mode&&tmp[1]!=0;
 	return resp;
 }
 

@@ -37,40 +37,43 @@ void lsvf_flush_iobuf(struct udata_s* u){
 	short bulk_len=0;
 	for(int i=0;i<u->o_ptr;i++){
 		struct jtag_lines ln=u->out_buf[i];
-		fprintf(tmp, "TMS:%2d TDI:%2d TDO:%2d MASK:%2d\n", ln.tms, ln.tdi, ln.tdo, ln.mask);
 		
 		if(ln.tdi==-1){
 			//TMS write
-			int tms=ln.tms, tcks=0;
-			while(ln.tdi==-1&&ln.tms==tms){
+			char count=0, data=0, dbit=1, chk=0, cmask=0;
+			while(ln.tdi==-1&&ln.tms!=-1){
+				fprintf(tmp, "TMS:%2d TDI:%2d TDO:%2d MASK:%2d\n", ln.tms, ln.tdi, ln.tdo, ln.mask);
 				i++;
-				tcks++;
-				if(tcks>65536){
-					tcks=65536;
-					break;
+				data|=ln.tms*dbit;
+				if(ln.tdo!=-1){
+					cmask|=dbit;
+					chk|=ln.tdo*dbit;
 				}
+				dbit<<=1;
+				count++;
+				if(count==8) break;
 				if(i<u->o_ptr) ln=u->out_buf[i];
 				else break;
 			}
 			i--;
-			bulk_out[bulk_len][0]=0x20|(0x40*tms);
-			bulk_out[bulk_len][1]=0;
-			bulk_out[bulk_len][2]=(tcks-1)>>8;
-			bulk_out[bulk_len][3]=(tcks-1);
+			bulk_out[bulk_len][0]=0x80|(count-1);
+			bulk_out[bulk_len][1]=data;
+			bulk_out[bulk_len][2]=chk;
+			bulk_out[bulk_len][3]=cmask;
 			bulk_len++;
 		}else{
 			//TDI write
-			char count=0, data=0, dbit=1, chk=0, cmask=0, cbit=1;
+			char count=0, data=0, dbit=1, chk=0, cmask=0;
 			bool tmsAfter=false;
 			while(ln.tdi!=-1&&!tmsAfter){
+				fprintf(tmp, "TMS:%2d TDI:%2d TDO:%2d MASK:%2d\n", ln.tms, ln.tdi, ln.tdo, ln.mask);
 				i++;
-				data&=ln.tdi*dbit;
-				dbit<<=1;
+				data|=ln.tdi*dbit;
 				if(ln.tdo!=-1){
-					cmask&=cbit;
-					chk&=ln.tdo*cbit;
+					cmask|=dbit;
+					chk|=ln.tdo*dbit;
 				}
-				cbit<<=1;
+				dbit<<=1;
 				count++;
 				if(ln.tms) tmsAfter=true;
 				if(count==8) break;
@@ -99,7 +102,7 @@ void lsvf_flush_iobuf(struct udata_s* u){
 int lsvf_host_setup(struct libxsvf_host *h){
 	bool ok;
 	struct udata_s* u=h->user_data;
-	logsys_tx_jtag_begin(u->dev, MODE_ECHO, &ok);
+	logsys_tx_jtag_begin(u->dev, MODE_CMP, &ok);
 	tmp=fopen("/tmp/ls.log", "w");
 	return ok?0:-1;
 }
@@ -171,18 +174,17 @@ void lsvf_host_report_error(struct libxsvf_host *h, const char *file, int line, 
 	fprintf(stderr, "[%s:%d] %s\n", file, line, message);
 }
 
-static int realloc_maxsize[LIBXSVF_MEM_NUM];
-
 static void *lsvf_host_realloc(struct libxsvf_host *h, void *ptr, int size, enum libxsvf_mem which)
 {
-	struct udata_s_s *u = h->user_data;
-	if (size > realloc_maxsize[which])
-		realloc_maxsize[which] = size;
-	
 	return realloc(ptr, size);
 }
 
 int logsys_jtag_dl_svf(libusb_device_handle* dev, void* f){
+	struct udata_s u={
+		dev,
+		f,
+		0
+	};
 	struct libxsvf_host h={
 		.udelay = lsvf_host_udelay,
 		.setup = lsvf_host_setup,
@@ -197,9 +199,7 @@ int logsys_jtag_dl_svf(libusb_device_handle* dev, void* f){
 		.report_status = lsvf_host_report_status,
 		.report_error = lsvf_host_report_error,
 		.realloc = lsvf_host_realloc,
-		.user_data = malloc(sizeof(struct udata_s))
+		.user_data = &u
 	};
-	((struct udata_s*)h.user_data)->dev=dev;
-	((struct udata_s*)h.user_data)->svfFile=f;
 	return libxsvf_play(&h, LIBXSVF_MODE_SVF);
 }
