@@ -1,7 +1,7 @@
 #ifndef _LOGSYSDRV_STATUS_H
 #define _LOGSYSDRV_STATUS_H
 
-#include "logsys-common.h"
+#include "logsys/common.h"
 
 //supply voltage
 double logsys_get_vcc_out(LogsysStatus status);

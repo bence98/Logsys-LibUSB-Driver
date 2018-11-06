@@ -1,7 +1,7 @@
 #ifndef _LOGSYSDRV_USB_H
 #define _LOGSYSDRV_USB_H
 
-#include "logsys-common.h"
+#include "logsys/common.h"
 
 //interface number
 #define LOGSYS_IFN_DEV 0

@@ -5,14 +5,12 @@
 #include <stdio.h>
 #include <unistd.h>
 #include "libxsvf.h"
-#include "logsys-usb.h"
+#include "logsys/usb.h"
 
 struct jtag_lines{
 	//0: low, 1: high, -1: keep/don't care
 	char tms, tdi, tdo, mask;
 };
-
-FILE* tmp;
 
 struct udata_s{
 	libusb_device_handle* dev;
@@ -41,7 +39,6 @@ void lsvf_flush_iobuf(struct udata_s* u){
 			//TMS write
 			char count=0, data=0, dbit=1, chk=0, cmask=0;
 			while(ln.tdi==-1&&ln.tms!=-1){
-				fprintf(tmp, "TMS:%2d TDI:%2d TDO:%2d MASK:%2d\n", ln.tms, ln.tdi, ln.tdo, ln.mask);
 				i++;
 				data|=ln.tms*dbit;
 				if(ln.tdo!=-1){
@@ -65,7 +62,6 @@ void lsvf_flush_iobuf(struct udata_s* u){
 			char count=0, data=0, dbit=1, chk=0, cmask=0;
 			bool tmsAfter=false;
 			while(ln.tdi!=-1&&!tmsAfter){
-				fprintf(tmp, "TMS:%2d TDI:%2d TDO:%2d MASK:%2d\n", ln.tms, ln.tdi, ln.tdo, ln.mask);
 				i++;
 				data|=ln.tdi*dbit;
 				if(ln.tdo!=-1){
@@ -102,7 +98,6 @@ int lsvf_host_setup(struct libxsvf_host *h){
 	bool ok;
 	struct udata_s* u=h->user_data;
 	logsys_tx_jtag_begin(u->dev, MODE_CMP, &ok);
-	tmp=fopen("/tmp/ls.log", "w");
 	return ok?0:-1;
 }
 
@@ -110,7 +105,6 @@ int lsvf_host_shutdown(struct libxsvf_host *h){
 	struct udata_s* u=h->user_data;
 	lsvf_flush_iobuf(u);
 	logsys_tx_jtag_end(u->dev);
-	fclose(tmp);
 	return 0;
 }
 

@@ -4,7 +4,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <signal.h>
-#include "logsys-usb.h"
+#include "logsys/usb.h"
 
 bool run=true;
 

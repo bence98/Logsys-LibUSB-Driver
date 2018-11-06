@@ -1,7 +1,7 @@
 #include <libusb-1.0/libusb.h>
 #include <stdbool.h>
 #include <stdlib.h>
-#include "logsys-usb.h"
+#include "logsys/usb.h"
 
 bool logsys_was_init=false;
 

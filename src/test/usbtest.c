@@ -3,8 +3,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
-#include "logsys-usb.h"
-#include "logsys-status.h"
+#include "logsys/usb.h"
+#include "logsys/status.h"
 
 void print_buf(char* buf, int len){
 	for(int i=0;i<len;i++)

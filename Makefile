@@ -1,24 +1,25 @@
 CC=gcc
 CFLAGS=-I./include -I./libxsvf -g
-LDFLAGS=$(shell pkg-config --libs libusb-1.0)
+LDFLAGS_COMMON=$(shell pkg-config --libs libusb-1.0)
+LDFLAGS_TEST= -L./build -llogsys-drv
 
 OBJS_SO=build/tmp/shared/logsys-usb.o build/tmp/shared/logsys-status.o build/tmp/shared/xsvf.o
 
-all: build/logsys-drv.so
+all: build/liblogsys-drv.so
 
 test: build/logsys-test build/hotplug-test
 
 clean:
 	find build -type f -delete
 
-build/logsys-drv.so: $(OBJS_SO) libxsvf/libxsvf.a
-	$(CC) $(CFLAGS) $^ --shared -o $@
+build/liblogsys-drv.so: $(OBJS_SO) libxsvf/libxsvf.a
+	$(CC) $(CFLAGS) $^ $(LDFLAGS_COMMON) --shared -o $@
 
-build/logsys-test: build/tmp/test/usbtest.o build/logsys-drv.so
-	$(CC) $(CFLAGS) $^ $(LDFLAGS) -o $@
+build/logsys-test: build/tmp/test/usbtest.o
+	$(CC) $(CFLAGS) $^ $(LDFLAGS_COMMON) $(LDFLAGS_TEST) -o $@
 
-build/hotplug-test: build/tmp/test/hotplug.o build/logsys-drv.so
-	$(CC) $(CFLAGS) $^ $(LDFLAGS) -o $@
+build/hotplug-test: build/tmp/test/hotplug.o
+	$(CC) $(CFLAGS) $^ $(LDFLAGS_COMMON) $(LDFLAGS_TEST) -o $@
 
 build/tmp/shared/%.o: src/shared/%.c
 	$(CC) $(CFLAGS) -c -fPIC $< -o $@

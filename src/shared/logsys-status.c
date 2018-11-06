@@ -1,6 +1,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
-#include "logsys-status.h"
+#include "logsys/status.h"
 
 double logsys_get_vcc_out(LogsysStatus status){
 	short adcData=TO_WORD(status.vOutH, status.vOutL)&((1<<11)-1);
