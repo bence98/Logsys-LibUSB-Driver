@@ -11,6 +11,54 @@ void print_buf(char* buf, int len){
 		printf("%02X", buf[i]);
 }
 
+size_t parse_tokens(char* tokens[], size_t token_count){
+	char* ln=NULL;
+	size_t ln_len=0;
+	if(getline(&ln, &ln_len, stdin)==-1){
+		free(ln);
+		return 0;
+	}
+	
+	for(size_t idx=0;idx<token_count;idx++){
+		if(tokens[idx]!=NULL)
+			free(tokens[idx]);
+		tokens[idx]=malloc(ln_len+1);
+	}
+	
+	size_t tok_len=0;
+	int token=0;
+	char quot_char=0;
+	tokens[token]=malloc(ln_len);
+	for(size_t idx=0;idx<ln_len;idx++){
+		if(ln[idx]==' '&&quot_char==0 || ln[idx]==quot_char){
+			if(tok_len>0){
+				tokens[token][tok_len]='\0';
+				token++;
+				tok_len=0;
+				quot_char=0;
+			}
+		}else if((ln[idx]=='\''||ln[idx]=='"')&&quot_char==0)
+			quot_char=ln[idx];
+		else if(ln[idx]=='\r'||ln[idx]=='\n'){
+			tokens[token][tok_len]='\0';
+			token++;
+			free(ln);
+			return token;
+		}
+		else{
+			tokens[token][tok_len]=ln[idx];
+			tok_len++;
+		}
+	}
+	
+	free(ln);
+	return token_count;
+}
+
+bool cmd_cmp(char* tokens[], size_t idx, char* to_find){
+	return strncmp(tokens[idx], to_find, strlen(to_find))==0;
+}
+
 int main(void){
 	printf("Logsys USB driver test.\nExit with \"quit\" or CTRL+D\nDo not CTRL+C / SIGKILL!\n");
 	if(!logsys_usb_init()){
@@ -25,11 +73,10 @@ int main(void){
 		return 2;
 	}
 	
-	char* cmd=NULL;
-	size_t cmd_len=0;
-	while(getline(&cmd, &cmd_len, stdin)!=-1){
+	char* cmd[3]={0};
+	while(parse_tokens(cmd, 3)>0){
 		int res;
-		if(strncmp(cmd, "status", sizeof("status")-1)==0){
+		if(cmd_cmp(cmd, 0, "status")){
 				LogsysStatus status={0};
 				res=logsys_tx_get_status(logsys, &status);
 				if(res<0){
@@ -55,7 +102,8 @@ int main(void){
 					logsys_is_end_ni_used(status)?'.':' ',
 					logsys_is_end_int_used(status)?'.':' '
 				);
-		}else if(strncmp(cmd, "clk status", sizeof("clk status")-1)==0){
+		}else if(cmd_cmp(cmd, 0, "clk")){
+			if(cmd_cmp(cmd, 1, "status")){
 				LogsysClkStatus clkStatus={0};
 				res=logsys_tx_clk_status(logsys, &clkStatus);
 				if(res<0){
@@ -66,7 +114,25 @@ int main(void){
 					printf("Period register(LE): %02X %02X, prescaler: %02X\n", clkStatus.periodRegL, clkStatus.periodRegH, clkStatus.prescaler);
 				else
 					printf("Clock is off\n");
-		}else if(strncmp(cmd, "pwrlim get", sizeof("pwrlim get")-1)==0){
+			}else if(cmd_cmp(cmd, 1, "start")){
+				bool ok;
+				res=logsys_clk_start(logsys, atoi(cmd[2]), &ok);
+			}else if(cmd_cmp(cmd, 1, "stop")){
+				bool ok;
+				res=logsys_clk_stop(logsys, &ok);
+				if(res<0){
+					fprintf(stderr, "Failed! %d\n", res);
+					continue;
+				}
+				if(ok)
+					printf("Stopped clock\n");
+				else
+					fprintf(stderr, "Clock was off!\n");
+			}else{
+				fprintf(stderr, "Invalid operation: 'clk %s'. Allowed: 'status', 'start', 'stop'\n", cmd[1]);
+			}
+		}else if(cmd_cmp(cmd, 0, "pwrlim")){
+			if(cmd_cmp(cmd, 1, "get")){
 				char buf2[21];
 				LogsysPwrLimit limit={0};
 				res=logsys_tx_get_pwr_limit(logsys, &limit);
@@ -83,15 +149,23 @@ int main(void){
 					continue;
 				}
 				printf("Got "); print_buf(buf2, 21); printf("\n");
-		}else if(strncmp(cmd, "vcc on", sizeof("vcc on")-1)==0){
+			}else{
+				fprintf(stderr, "Invalid operation: 'pwrlim %s'. Allowed: 'get'\n", cmd[1]);
+			}
+		}else if(cmd_cmp(cmd, 0, "vcc")){
+			if(cmd_cmp(cmd, 1, "on")){
 				res=logsys_tx_set_vcc(logsys, true);
 				if(res<0)
 					fprintf(stderr, "Failed! %d\n", res);
-		}else if(strncmp(cmd, "vcc off", sizeof("vcc off")-1)==0){
+			}else if(cmd_cmp(cmd, 1, "off")){
 				res=logsys_tx_set_vcc(logsys, false);
 				if(res<0)
 					fprintf(stderr, "Failed! %d\n", res);
-		}else if(strncmp(cmd, "jtag scan", sizeof("jtag scan")-1)==0){
+			}else{
+				fprintf(stderr, "Invalid operation: 'vcc %s'. Allowed: 'on' or 'off'\n", cmd[1]);
+			}
+		}else if(cmd_cmp(cmd, 0, "jtag")){
+			if(cmd_cmp(cmd, 1, "scan")){
 				bool ready;
 				res=logsys_tx_jtag_begin(logsys, MODE_ECHO, &ready);
 				if(res<0){
@@ -115,18 +189,24 @@ int main(void){
 				res=logsys_tx_jtag_end(logsys);
 				if(res<0)
 					fprintf(stderr, "End failed! %d\n", res);
-		}else if(strncmp(cmd, "conf svf", sizeof("conf svf")-1)==0){
-			FILE* f=fopen("/home/bence/Dokumentumok/bme/digit1/impact/sz_geektime.svf", "r");
-			logsys_jtag_dl_svf(logsys, f);
-			fclose(f);
-		}else if(strncmp(cmd, "quit", sizeof("quit")-1)==0){
+			}else{
+				fprintf(stderr, "Invalid operation: 'jtag %s'. Did you mean 'conf'?\n", cmd[1]);
+			}
+		}else if(cmd_cmp(cmd, 0, "conf")){
+			if(cmd_cmp(cmd, 1, "svf")){
+				FILE* f=fopen(cmd[2], "r");
+				logsys_jtag_dl_svf(logsys, f);
+				fclose(f);
+			}else{
+				fprintf(stderr, "Invalid operation: 'conf %s' (unsupported format?)\n", cmd[1]);
+			}
+		}else if(cmd_cmp(cmd, 0, "quit")){
 			break;
 		}else{
-			fprintf(stderr, "Unknown command! %s\n", cmd);
+			fprintf(stderr, "Unknown command! %s\n", cmd[0]);
 		}
 	}
 	printf("Exiting...\n");
-	if(cmd!=NULL) free(cmd);
 	logsys_usb_close(logsys);
 	logsys_usb_end();
 	return 0;
