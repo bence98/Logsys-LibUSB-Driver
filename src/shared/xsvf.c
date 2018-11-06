@@ -32,7 +32,6 @@ void lsvf_write_pack(libusb_device_handle* dev, char bulk_out[1024][4], short bu
 }
 
 void lsvf_flush_iobuf(struct udata_s* u){
-	bool tmsMode=false;
 	char bulk_out[1024][4]={0};
 	short bulk_len=0;
 	for(int i=0;i<u->o_ptr;i++){
@@ -109,6 +108,7 @@ int lsvf_host_setup(struct libxsvf_host *h){
 
 int lsvf_host_shutdown(struct libxsvf_host *h){
 	struct udata_s* u=h->user_data;
+	lsvf_flush_iobuf(u);
 	logsys_tx_jtag_end(u->dev);
 	fclose(tmp);
 	return 0;
