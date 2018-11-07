@@ -80,7 +80,7 @@ int main(void){
 				LogsysStatus status={0};
 				res=logsys_tx_get_status(logsys, &status);
 				if(res<0){
-					fprintf(stderr, "Failed! %d\n", res);
+					fprintf(stderr, "Failed! %s\n", libusb_error_name(res));
 					continue;
 				}
 				
@@ -107,11 +107,11 @@ int main(void){
 				LogsysClkStatus clkStatus={0};
 				res=logsys_tx_clk_status(logsys, &clkStatus);
 				if(res<0){
-					fprintf(stderr, "Failed! %d\n", res);
+					fprintf(stderr, "Failed! %s\n", libusb_error_name(res));
 					continue;
 				}
 				if(clkStatus.active)
-					printf("Period register(LE): %02X %02X, prescaler: %02X\n", clkStatus.periodRegL, clkStatus.periodRegH, clkStatus.prescaler);
+					printf("Period register(LE): %02X %02X, prescaler: %02X\n", (unsigned char)clkStatus.periodRegL, (unsigned char)clkStatus.periodRegH, (unsigned char)clkStatus.prescaler);
 				else
 					printf("Clock is off\n");
 			}else if(cmd_cmp(cmd, 1, "start")){
@@ -121,7 +121,7 @@ int main(void){
 				bool ok;
 				res=logsys_clk_stop(logsys, &ok);
 				if(res<0){
-					fprintf(stderr, "Failed! %d\n", res);
+					fprintf(stderr, "Failed! %s\n", libusb_error_name(res));
 					continue;
 				}
 				if(ok)
@@ -137,7 +137,7 @@ int main(void){
 				LogsysPwrLimit limit={0};
 				res=logsys_tx_get_pwr_limit(logsys, &limit);
 				if(res<0){
-					fprintf(stderr, "Failed! %d\n", res);
+					fprintf(stderr, "Failed! %s\n", libusb_error_name(res));
 					continue;
 				}
 				printf("Max power: %d mA\n",
@@ -145,7 +145,7 @@ int main(void){
 				);
 				res=logsys_tx_get_pwr_corr(logsys, buf2);
 				if(res<0){
-					fprintf(stderr, "Failed! %d\n", res);
+					fprintf(stderr, "Failed! %s\n", libusb_error_name(res));
 					continue;
 				}
 				printf("Got "); print_buf(buf2, 21); printf("\n");
@@ -156,11 +156,11 @@ int main(void){
 			if(cmd_cmp(cmd, 1, "on")){
 				res=logsys_tx_set_vcc(logsys, true);
 				if(res<0)
-					fprintf(stderr, "Failed! %d\n", res);
+					fprintf(stderr, "Failed! %s\n", libusb_error_name(res));
 			}else if(cmd_cmp(cmd, 1, "off")){
 				res=logsys_tx_set_vcc(logsys, false);
 				if(res<0)
-					fprintf(stderr, "Failed! %d\n", res);
+					fprintf(stderr, "Failed! %s\n", libusb_error_name(res));
 			}else{
 				fprintf(stderr, "Invalid operation: 'vcc %s'. Allowed: 'on' or 'off'\n", cmd[1]);
 			}
@@ -169,7 +169,7 @@ int main(void){
 				bool ready;
 				res=logsys_tx_jtag_begin(logsys, MODE_ECHO, &ready);
 				if(res<0){
-					fprintf(stderr, "Begin failed! %d\n", res);
+					fprintf(stderr, "Begin failed! %s\n", libusb_error_name(res));
 					continue;
 				}
 				if(!ready){
@@ -180,7 +180,7 @@ int main(void){
 				int dev_len;
 				res=logsys_jtag_scan(logsys, devs, 16, &dev_len);
 				if(res<0){
-					fprintf(stderr, "Scan failed! %d\n", res);
+					fprintf(stderr, "Scan failed! %s\n", libusb_error_name(res));
 					continue;
 				}
 				printf("%d devices:\n", dev_len);
@@ -188,15 +188,16 @@ int main(void){
 					printf("  0x%.8X\n", devs[i]);
 				res=logsys_tx_jtag_end(logsys);
 				if(res<0)
-					fprintf(stderr, "End failed! %d\n", res);
+					fprintf(stderr, "End failed! %s\n", libusb_error_name(res));
 			}else{
 				fprintf(stderr, "Invalid operation: 'jtag %s'. Did you mean 'conf'?\n", cmd[1]);
 			}
 		}else if(cmd_cmp(cmd, 0, "conf")){
 			if(cmd_cmp(cmd, 1, "svf")){
 				FILE* f=fopen(cmd[2], "r");
-				logsys_jtag_dl_svf(logsys, f);
+				res=logsys_jtag_dl_svf(logsys, f);
 				fclose(f);
+				printf("Configuration finished (%d)\n", res);
 			}else{
 				fprintf(stderr, "Invalid operation: 'conf %s' (unsupported format?)\n", cmd[1]);
 			}

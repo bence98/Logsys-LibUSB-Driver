@@ -154,15 +154,11 @@ int lsvf_host_set_frequency(struct libxsvf_host *h, int v){
 	return 0;
 }
 
-void lsvf_host_report_tapstate(struct libxsvf_host *h){
-	printf("[%s]\n", libxsvf_state2str(h->tap_state));
-}
+void lsvf_host_report_tapstate(struct libxsvf_host *h){}
 
 void lsvf_host_report_device(struct libxsvf_host *h, unsigned long idcode){}
 
-void lsvf_host_report_status(struct libxsvf_host *h, const char *message){
-// 	printf("[STATUS] %s\n", message);
-}
+void lsvf_host_report_status(struct libxsvf_host *h, const char *message){}
 
 void lsvf_host_report_error(struct libxsvf_host *h, const char *file, int line, const char *message){
 	fprintf(stderr, "[%s:%d] %s\n", file, line, message);
