@@ -5,6 +5,7 @@
 #include <string.h>
 #include "logsys/usb.h"
 #include "logsys/status.h"
+#include "logsys/jconf.h"
 
 void print_buf(char* buf, int len){
 	for(int i=0;i<len;i++)
@@ -225,12 +226,29 @@ int main(void){
 		}else if(cmd_cmp(cmd, 0, "conf")){
 			if(cmd_cmp(cmd, 1, "svf")){
 				FILE* f=fopen(cmd[2], "r");
+				if(f==NULL){
+					fprintf(stderr, "Could not open XSVF file!\n");
+					continue;
+				}
 				res=logsys_jtag_dl_svf(logsys, f);
 				fclose(f);
 				printf("Configuration finished (%d)\n", res);
 			}else if(cmd_cmp(cmd, 1, "xsvf")){
 				FILE* f=fopen(cmd[2], "r");
+				if(f==NULL){
+					fprintf(stderr, "Could not open XSVF file!\n");
+					continue;
+				}
 				res=logsys_jtag_dl_xsvf(logsys, f);
+				fclose(f);
+				printf("Configuration finished (%d)\n", res);
+			}else if(cmd_cmp(cmd, 1, "bit")){
+				FILE* f=logsys_conv_bit2svf(cmd[2]);
+				if(f==NULL){
+					fprintf(stderr, "Could not convert BIT file! (missing XILINX?)\n");
+					continue;
+				}
+				res=logsys_jtag_dl_svf(logsys, f);
 				fclose(f);
 				printf("Configuration finished (%d)\n", res);
 			}else{

@@ -3,7 +3,7 @@ CFLAGS=-I./include -I./libxsvf -g
 LDFLAGS_COMMON=$(shell pkg-config --libs libusb-1.0)
 LDFLAGS_TEST= -L./build -llogsys-drv
 
-OBJS_SO=build/tmp/shared/logsys-usb.o build/tmp/shared/logsys-status.o build/tmp/shared/xsvf.o
+OBJS_SO=build/tmp/shared/usb.o build/tmp/shared/status.o build/tmp/shared/jconf.o
 
 all: build/liblogsys-drv.so
 

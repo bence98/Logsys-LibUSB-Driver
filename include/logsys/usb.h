@@ -71,6 +71,4 @@ int logsys_jtag_set_mode(libusb_device_handle* dev, LogsysJtagMode mode);
 //in JTAG Write & Compare mode, the development cable checks the response and this query reads the check results 
 int logsys_jtag_check_error(libusb_device_handle* dev, /*out*/bool* error);
 
-int logsys_jtag_dl_svf(libusb_device_handle* dev, void* f);
-int logsys_jtag_dl_xsvf(libusb_device_handle* dev, void* f);
 #endif //_LOGSYSDRV_USB_H

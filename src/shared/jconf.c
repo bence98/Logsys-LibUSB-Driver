@@ -4,8 +4,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include "libxsvf.h"
 #include "logsys/usb.h"
+#include "logsys/jconf.h"
 
 struct jtag_lines{
 	//0: low, 1: high, -1: keep/don't care
@@ -200,4 +205,25 @@ int logsys_jtag_dl_svf(libusb_device_handle* dev, void* f){
 
 int logsys_jtag_dl_xsvf(libusb_device_handle* dev, void* f){
 	return lsvf_play(dev, f, false);
+}
+
+void* logsys_conv_bit2svf(char* bitfile){
+	int fdLastDir=open(".", O_DIRECTORY);
+	chdir("/tmp");
+	void* impactCmd=popen("/opt/Xilinx/*/ISE_DS/ISE/bin/lin64/impact -batch", "w");
+	fprintf(impactCmd, "setPreference -pref StartupClock:AUTO_CORRECTION\n\
+setPreference -pref AutoSignature:FALSE\nsetPreference -pref KeepSVF:FALSE\n\
+setPreference -pref ConcurrentMode:FALSE\nsetPreference -pref UseHighz:FALSE\n\
+setPreference -pref ConfigOnFailure:STOP\nsetPreference -pref UserLevel:NOVICE\n\
+setPreference -pref MessageLevel:DETAILED\nsetPreference -pref svfUseTime:TRUE\n\
+setMode -bs\nsetMode -bs\nsetCable -port svf -file \"bit2svf.svf\"\n\
+addDevice -p 1 -file \"%s\"\n\nProgram -p 1 -defaultVersion 0\nquit\n", bitfile);
+	fflush(impactCmd);
+	int res=pclose(impactCmd);
+	fchdir(fdLastDir);
+	if(WIFEXITED(res)&&WEXITSTATUS(res)==0){
+		return fopen("/tmp/bit2svf.svf", "r");
+	}else{
+		return NULL;
+	}
 }
