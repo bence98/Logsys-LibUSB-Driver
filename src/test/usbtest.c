@@ -161,8 +161,38 @@ int main(void){
 				res=logsys_tx_set_vcc(logsys, false);
 				if(res<0)
 					fprintf(stderr, "Failed! %s\n", libusb_error_name(res));
+			}else if(cmd_cmp(cmd, 1, "get")){
+				bool vcc;
+				res=logsys_tx_get_vcc(logsys, &vcc);
+				if(res<0)
+					fprintf(stderr, "Failed! %s\n", libusb_error_name(res));
+				printf("VCC %s\n", vcc?"high":"low");
 			}else{
-				fprintf(stderr, "Invalid operation: 'vcc %s'. Allowed: 'on' or 'off'\n", cmd[1]);
+				fprintf(stderr, "Invalid operation: 'vcc %s'. Allowed: 'on', 'off', 'get'\n", cmd[1]);
+			}
+		}else if(cmd_cmp(cmd, 0, "rst")){
+			if(cmd_cmp(cmd, 1, "on")){
+				bool ok;
+				res=logsys_tx_set_reset(logsys, true, &ok);
+				if(res<0)
+					fprintf(stderr, "Failed! %s\n", libusb_error_name(res));
+				if(!ok)
+					fprintf(stderr, "Could not drive RST! (already in use)\n");
+			}else if(cmd_cmp(cmd, 1, "off")){
+				bool ok;
+				res=logsys_tx_set_reset(logsys, false, &ok);
+				if(res<0)
+					fprintf(stderr, "Failed! %s\n", libusb_error_name(res));
+				if(!ok)
+					fprintf(stderr, "Could not drive RST! (already in use?)\n");
+			}else if(cmd_cmp(cmd, 1, "get")){
+				bool rst;
+				res=logsys_tx_get_reset(logsys, &rst);
+				if(res<0)
+					fprintf(stderr, "Failed! %s\n", libusb_error_name(res));
+				printf("RST %s\n", rst?"high":"low");
+			}else{
+				fprintf(stderr, "Invalid operation: 'rst %s'. Allowed: 'on', 'off', 'get'\n", cmd[1]);
 			}
 		}else if(cmd_cmp(cmd, 0, "jtag")){
 			if(cmd_cmp(cmd, 1, "scan")){
@@ -196,6 +226,11 @@ int main(void){
 			if(cmd_cmp(cmd, 1, "svf")){
 				FILE* f=fopen(cmd[2], "r");
 				res=logsys_jtag_dl_svf(logsys, f);
+				fclose(f);
+				printf("Configuration finished (%d)\n", res);
+			}else if(cmd_cmp(cmd, 1, "xsvf")){
+				FILE* f=fopen(cmd[2], "r");
+				res=logsys_jtag_dl_xsvf(logsys, f);
 				fclose(f);
 				printf("Configuration finished (%d)\n", res);
 			}else{

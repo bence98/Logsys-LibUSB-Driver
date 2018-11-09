@@ -169,7 +169,7 @@ static void *lsvf_host_realloc(struct libxsvf_host *h, void *ptr, int size, enum
 	return realloc(ptr, size);
 }
 
-int logsys_jtag_dl_svf(libusb_device_handle* dev, void* f){
+int lsvf_play(libusb_device_handle* dev, void* f, bool svfMode){
 	struct udata_s u={
 		dev,
 		f,
@@ -191,5 +191,13 @@ int logsys_jtag_dl_svf(libusb_device_handle* dev, void* f){
 		.realloc = lsvf_host_realloc,
 		.user_data = &u
 	};
-	return libxsvf_play(&h, LIBXSVF_MODE_SVF);
+	return libxsvf_play(&h, svfMode?LIBXSVF_MODE_SVF:LIBXSVF_MODE_XSVF);
+}
+
+int logsys_jtag_dl_svf(libusb_device_handle* dev, void* f){
+	return lsvf_play(dev, f, true);
+}
+
+int logsys_jtag_dl_xsvf(libusb_device_handle* dev, void* f){
+	return lsvf_play(dev, f, false);
 }
