@@ -242,7 +242,7 @@ int main(void){
 				res=logsys_jtag_dl_xsvf(logsys, f);
 				fclose(f);
 				printf("Configuration finished (%d)\n", res);
-			}else if(cmd_cmp(cmd, 1, "bit")){
+			}else if(cmd_cmp(cmd, 1, "bit")||cmd_cmp(cmd, 1, "jed")){
 				FILE* f=logsys_conv_bit2svf(cmd[2]);
 				if(f==NULL){
 					fprintf(stderr, "Could not convert BIT file! (missing XILINX?)\n");
