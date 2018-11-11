@@ -11,10 +11,11 @@ This repository contains the Linux-compatible driver for the [LOGSYS](http://log
 
 * You may need to clone (http://svn.clifford.at/libxsvf/) with Subversion or git-svn
 * `make`: The shared object will be created in the `build` folder
+* `sudo make install`: install the library to `/usr/local/lib`. You will probably need to do this to run the tests (though you _could technically_ use `$LD_LIBRARY_PATH` to circumvent this)
 * tests: `make test`: Test binaries will be created in the `build` folder
   * `hotplug-test`: Prints 'Logsys [dis]connected' when you [un]plug the device
   * `logsys-test`: Communication protocol test. Exit with the `quit` command or with CTRL+D (EOF). Do not kill with SIGINT (CTRL+C)!
-* Using the driver in your app: In this stage, I wouldn't recommend. But if you really wanted to, just link against `logsys-drv.so`
+* Using the driver in your app: link with `-llogsys-drv` (assuming you installed the lib)
 * Allowing an unprivileged user to access the device (recommended): run `udev-rule.sh` as root
 
 ## API
@@ -25,4 +26,4 @@ See the `include` folder & the tests or the [Wiki page](https://github.com/bence
 
 This project is not affiliated with the LOGSYS project.
 
-The driver is in an **unstable** stage. Use with caution! No warranty.
+The driver is in a **testing** stage. Use with caution! No warranty.
