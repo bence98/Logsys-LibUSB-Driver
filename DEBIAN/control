@@ -1,0 +1,9 @@
+Package: logsys-drv
+Version: 0-rc1
+Section: base
+Priority: optional
+Architecture: amd64
+Depends: libusb-1.0-0 (>= 1.0.21)
+Maintainer: Bence Csókás <bence98@sch.bme.hu>
+Description: LOGSYS driver
+ A driver for the LOGSYS development cable
