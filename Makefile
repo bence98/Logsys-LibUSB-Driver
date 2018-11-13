@@ -22,8 +22,8 @@ all: build/$(LIBNAME)
 test: build/logsys-test build/hotplug-test
 
 clean:
-	rm -rf build/logsys-drv
-	find build -type f -delete
+	rm -rf build
+#	find build -type f -delete
 
 install: build/$(LIBNAME)
 	cp $< /usr/local/lib/$(LIBNAME).$(MAJOR).$(SUBVERSION)
@@ -36,6 +36,9 @@ endif
 	ln -sf /usr/local/lib/$(LIBNAME).$(MAJOR) /usr/local/lib/$(LIBNAME)
 
 deb: build/logsys-drv.deb
+
+libxsvf/libxsvf.a:
+	cd libxsvf; $(MAKE) $(notdir $@)
 
 build/logsys-drv.deb: build/$(LIBNAME) build/logsys-test
 	mkdir -p build/logsys-drv/usr/local/lib/
