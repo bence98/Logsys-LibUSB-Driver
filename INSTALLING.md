@@ -9,7 +9,7 @@ Now, you should be able to run `logsys-test` from the terminal.
 You will have to compile the driver yourself
 
 * Before you begin, you need to make sure you have `libusb-1.0` and `libusb-1.0-dev` installed on your system.
-* First, clone the `libxsvf` SVN repo, as stated in `README.md`
+* First, clone `libxsvf`, by running `git submodule sync && git submodule update`
 * Then, run `make` and `sudo make install`
 * It is advised to run `sudo ./udev-rule.sh`
 * Finally, you can run `make test` to get the `logsys-test` binary in the `build` folder
@@ -18,7 +18,7 @@ You will have to compile the driver yourself
 First, you're very brave. I like that :D Second, you should *really* have a package manager (I would recommend [Homebrew](https://brew.sh/))
 
 * Before you begin, you need to install LibUSB 1.0 (for example, with Homebrew it would mean running `brew install libusb`)
-* First, clone the `libxsvf` SVN repo, as stated in `README.md`
+* First, clone `libxsvf`, by running `git submodule sync && git submodule update`
 * Then, run `make` and `sudo make install`
 * Finally, you can run `make test` to get the `logsys-test` binary in the `build` folder
 
