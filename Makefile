@@ -1,3 +1,4 @@
+UNAME=$(shell uname -s)
 CC=gcc
 LIBNAME=liblogsys-drv.so
 #Release Candidate
@@ -7,7 +8,12 @@ SUBVERSION=0.1
 CFLAGS=-I./include -I./libxsvf -g
 LDFLAGS_COMMON=$(shell pkg-config --libs libusb-1.0)
 LDFLAGS_TEST=-L./build -llogsys-drv
+ifeq ($(UNAME), Linux)
 LDFLAGS_SO=--shared -Wl,-soname,$(LIBNAME).$(MAJOR)
+endif
+ifeq ($(UNAME), Darwin)
+LDFLAGS_SO=--shared -Wl,-install_name,$(LIBNAME).$(MAJOR)
+endif
 
 OBJS_SO=build/tmp/shared/usb.o build/tmp/shared/status.o build/tmp/shared/jconf.o
 
@@ -21,7 +27,12 @@ clean:
 
 install: build/$(LIBNAME)
 	cp $< /usr/local/lib/$(LIBNAME).$(MAJOR).$(SUBVERSION)
+ifeq ($(UNAME), Linux)
 	ldconfig /usr/local/lib
+endif
+ifeq ($(UNAME), Darwin)
+	ln -sf /usr/local/lib/$(LIBNAME).$(MAJOR).$(SUBVERSION) /usr/local/lib/$(LIBNAME).$(MAJOR)
+endif
 	ln -sf /usr/local/lib/$(LIBNAME).$(MAJOR) /usr/local/lib/$(LIBNAME)
 
 deb: build/logsys-drv.deb
@@ -47,7 +58,9 @@ build/hotplug-test: build/tmp/test/hotplug.o
 	$(CC) $(CFLAGS) $^ $(LDFLAGS_COMMON) $(LDFLAGS_TEST) -o $@
 
 build/tmp/shared/%.o: src/shared/%.c
+	mkdir -p $(@D)
 	$(CC) $(CFLAGS) -c -fPIC $< -o $@
 
 build/tmp/test/%.o: src/test/%.c
+	mkdir -p $(@D)
 	$(CC) $(CFLAGS) -c $< -o $@
