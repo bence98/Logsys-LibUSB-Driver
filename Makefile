@@ -41,6 +41,8 @@ prep-pkg: build/$(LIBNAME) build/logsys-test
 	mkdir -p $(DESTDIR)/usr/lib/
 	mkdir -p $(DESTDIR)/usr/bin/
 	mkdir -p $(DESTDIR)/etc/udev/rules.d/
+	cp -R include $(DESTDIR)/usr/include
+	cp libxsvf/*.h $(DESTDIR)/usr/include
 	cp $< $(DESTDIR)/usr/lib/$(LIBNAME).$(MAJOR).$(SUBVERSION)
 	cd $(DESTDIR)/usr/lib/; ln -s $(LIBNAME).$(MAJOR) $(LIBNAME)
 	cp $(word 2,$^) $(DESTDIR)/usr/bin/

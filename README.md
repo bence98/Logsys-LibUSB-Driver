@@ -11,7 +11,7 @@ This repository contains the Linux-compatible driver for the [LOGSYS](http://log
 
 ## Compiling the driver
 
-* You need to clone `libxsvf` by running `git submodule sync && git submodule update`
+* You need to clone `libxsvf` by running `git submodule init && git submodule update`
 * `make`: The shared object will be created in the `build` folder
 * `sudo make install`: install the library to `/usr/local/lib`. You will probably need to do this to run the tests (though you _could technically_ use `$LD_LIBRARY_PATH` to circumvent this)
 * tests: `make test`: Test binaries will be created in the `build` folder
