@@ -1,9 +1,18 @@
 # Installing the LOGSYS driver
 
-## Installing: Debian / Ubuntu / Linux Mint etc.
+## Installing: 64-bit Debian / Ubuntu / Linux Mint etc.
 Download the DEB file and install it with `dpkg` or your favourite package installer.
 
 Now, you should be able to run `logsys-test` from the terminal.
+
+## Installing: Arch Linux 64-bit (for lazy people :P )
+Download and install the TAR XZ using `pacman -U`
+
+## Installing: Arch Linux, from source (cross-platform)
+You will need to use `makepkg`, similar to how you would use the AUR
+
+* `git clone https://git.sch.bme.hu/bence98/logsys-arch-pkg.git`
+* `cd logsys-arch-pkg && makepkg -i`
 
 ## Installing: other Linux distros
 You will have to compile the driver yourself
