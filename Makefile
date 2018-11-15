@@ -37,18 +37,21 @@ endif
 
 deb: build/logsys-drv.deb
 
+prep-pkg: build/$(LIBNAME) build/logsys-test
+	mkdir -p $(DESTDIR)/usr/lib/
+	mkdir -p $(DESTDIR)/usr/bin/
+	mkdir -p $(DESTDIR)/etc/udev/rules.d/
+	cp $< $(DESTDIR)/usr/lib/$(LIBNAME).$(MAJOR).$(SUBVERSION)
+	cd $(DESTDIR)/usr/lib/; ln -s $(LIBNAME).$(MAJOR) $(LIBNAME)
+	cp $(word 2,$^) $(DESTDIR)/usr/bin/
+	./udev-rule.sh $(DESTDIR)
+
 libxsvf/libxsvf.a:
 	cd libxsvf; $(MAKE) $(notdir $@)
 
 build/logsys-drv.deb: build/$(LIBNAME) build/logsys-test
-	mkdir -p build/logsys-drv/usr/local/lib/
-	mkdir -p build/logsys-drv/usr/local/bin/
-	mkdir -p build/logsys-drv/etc/udev/rules.d/
-	cp -r DEBIAN build/logsys-drv/
-	cp $< build/logsys-drv/usr/local/lib/$(LIBNAME).$(MAJOR).$(SUBVERSION)
-	cd build/logsys-drv/usr/local/lib/; ln -s $(LIBNAME).$(MAJOR) $(LIBNAME)
-	cp $(lastword $^) build/logsys-drv/usr/local/bin/
-	./udev-rule.sh build/logsys-drv
+	DESTDIR=build/logsys-drv make prep-pkg
+	cp -LR DEBIAN build/logsys-drv/
 	cd build; dpkg-deb --build logsys-drv
 
 build/$(LIBNAME): $(OBJS_SO) libxsvf/libxsvf.a
