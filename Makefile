@@ -8,11 +8,10 @@ SUBVERSION=0.1
 CFLAGS=-I./include -I./libxsvf -g
 LDFLAGS_COMMON=$(shell pkg-config --libs libusb-1.0)
 LDFLAGS_TEST=-L./build -llogsys-drv
-ifeq ($(UNAME), Linux)
-LDFLAGS_SO=--shared -Wl,-soname,$(LIBNAME).$(MAJOR)
-endif
 ifeq ($(UNAME), Darwin)
 LDFLAGS_SO=--shared -Wl,-install_name,$(LIBNAME).$(MAJOR)
+else
+LDFLAGS_SO=--shared -Wl,-soname,$(LIBNAME).$(MAJOR)
 endif
 
 OBJS_SO=build/tmp/shared/usb.o build/tmp/shared/status.o build/tmp/shared/jconf.o
