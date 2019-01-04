@@ -1,5 +1,5 @@
 Package: logsys-drv
-Version: 0-rc1
+Version: 0-rc2
 Section: base
 Priority: optional
 Architecture: amd64

@@ -56,15 +56,15 @@ int logsys_clk_start(libusb_device_handle* dev, int freqHz, bool* success){
 }
 
 int logsys_clk_stop(libusb_device_handle* dev, bool* was_running){
-	return libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 4, 0, 0x0001, (char*)was_running, 1, 0);
+	return libusb_control_transfer(dev, LOGSYS_REQTYP_IN, 4, 0, 0x0001, (char*)was_running, 1, 0);
 }
 
 int logsys_tx_set_reset(libusb_device_handle* dev, bool reset, bool* success){
-	return libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 5, 0, reset, (char*)success, 1, 0);
+	return libusb_control_transfer(dev, LOGSYS_REQTYP_IN, 5, 0, reset, (char*)success, 1, 0);
 }
 
 int logsys_tx_get_reset(libusb_device_handle* dev, bool* reset){
-	return libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 5, 0, 0x0002, (char*)reset, 1, 0);
+	return libusb_control_transfer(dev, LOGSYS_REQTYP_IN, 5, 0, 0x0002, (char*)reset, 1, 0);
 }
 
 int logsys_tx_get_pwr_limit(libusb_device_handle* dev, LogsysPwrLimit* limit){
@@ -128,7 +128,7 @@ int logsys_tx_jtag_begin(libusb_device_handle* dev, LogsysJtagMode mode, bool* r
 	resp=libusb_control_transfer(dev, LOGSYS_REQTYP_IN,  3, 0, 0, tmp, 2, 0);
 	//this was in the disassembly of L-GUI, no clue why
 	//edit: modified as it wouldn't start in MODE_CMP mode
-	*ready=*ready&&tmp[0]==mode&&tmp[1]!=0;
+	*ready=tmp[0]==mode&&tmp[1]!=0;
 	return resp;
 }
 
