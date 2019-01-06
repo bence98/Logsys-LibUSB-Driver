@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include "logsys/usb.h"
+#include "logsys/serio.h"
 
 bool logsys_was_init=false;
 
@@ -193,4 +194,10 @@ int logsys_jtag_set_mode(libusb_device_handle* dev, LogsysJtagMode mode){
 
 int logsys_jtag_check_error(libusb_device_handle* dev, bool* error){
 	return libusb_control_transfer(dev, LOGSYS_REQTYP_IN,  20, 0, 0, (char*)error, 1, 0);
+}
+
+int logsys_serial_send(libusb_device_handle* dev, LogsysSerialLines send, LogsysSerialLines* recv){
+	int res=libusb_bulk_transfer(dev, LOGSYS_OUT_EP3, (char*)&send, 2, NULL, 0);
+	if(res<0) return res;
+	return libusb_bulk_transfer(dev, LOGSYS_IN_EP4, (char*)recv, 2, NULL, 0);
 }

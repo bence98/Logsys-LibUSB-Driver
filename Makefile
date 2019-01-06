@@ -18,7 +18,7 @@ OBJS_SO=build/tmp/shared/usb.o build/tmp/shared/status.o build/tmp/shared/jconf.
 
 all: build/$(LIBNAME)
 
-test: build/logsys-test build/hotplug-test
+test: build/logsys-test build/hotplug-test build/serio-test
 
 clean:
 	rm -rf build
@@ -62,6 +62,9 @@ build/logsys-test: build/tmp/test/usbtest.o
 	$(CC) $(CFLAGS) $^ $(LDFLAGS_COMMON) $(LDFLAGS_TEST) -o $@
 
 build/hotplug-test: build/tmp/test/hotplug.o
+	$(CC) $(CFLAGS) $^ $(LDFLAGS_COMMON) $(LDFLAGS_TEST) -o $@
+
+build/serio-test: build/tmp/test/sio_fb.o
 	$(CC) $(CFLAGS) $^ $(LDFLAGS_COMMON) $(LDFLAGS_TEST) -o $@
 
 build/tmp/shared/%.o: src/shared/%.c
