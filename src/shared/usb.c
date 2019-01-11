@@ -147,6 +147,11 @@ int logsys_tx_serial_begin(libusb_device_handle* dev, bool* success){
 	return resp;
 }
 
+int logsys_tx_serial_change_clk(libusb_device_handle* dev, int freqHz){
+	LogsysClkStatus status=logsys_create_clk_status(freqHz, 4);
+	return libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 99, status.periodRegL|(status.periodRegH<<8), status.prescaler, NULL, 0, 0);
+}
+
 int logsys_tx_serial_end(libusb_device_handle* dev){
 	return libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 97, 0, 0, NULL, 0, 0);
 }
@@ -215,6 +220,16 @@ int logsys_tx_usart_begin(libusb_device_handle* dev, bool usrt, bool* success){
 
 int logsys_tx_usart_end(libusb_device_handle* dev){
 	return libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 50, 0, 0, NULL, 0, 0);
+}
+
+int logsys_usart_getstr(libusb_device_handle* dev, char* buf, int maxlen, int* len, LogsysUsartStatus* status){
+	char tmp[maxlen+1];
+	int res=libusb_interrupt_transfer(dev, LOGSYS_IN_EP6, tmp, maxlen+1, len, 0);
+	if(res>=0){
+		memcpy(buf, tmp, len-1);
+		*status=tmp[len];
+	}
+	return res;
 }
 
 int logsys_usart_putstr(libusb_device_handle* dev, char* buf, int len){

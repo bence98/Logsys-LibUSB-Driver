@@ -60,6 +60,7 @@ int logsys_tx_jtag_begin(libusb_device_handle* dev, LogsysJtagMode mode, /*out*/
 int logsys_tx_jtag_end(libusb_device_handle* dev);
 
 int logsys_tx_serial_begin(libusb_device_handle* dev, bool* success);
+int logsys_tx_serial_change_clk(libusb_device_handle* dev, int freqHz);
 int logsys_tx_serial_end(libusb_device_handle* dev);
 
 //Performs a JTAG boundary-scan & returns the device IDs in the `jtag_devs` array and saves the number of devices in `found_devs`

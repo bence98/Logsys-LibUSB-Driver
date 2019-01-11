@@ -4,7 +4,7 @@
 #define LOGSYS_VID 0x03eb
 #define LOGSYS_PID 0xf0ff
 
-//construct a 2-byte word from high & low bytes
+/** construct a 2-byte word from high & low bytes */
 #define TO_WORD(h, l) (((char)h)<<8|((char)l))
 
 typedef struct _logsys_status{
