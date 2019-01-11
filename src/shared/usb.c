@@ -1,6 +1,7 @@
 #include <libusb-1.0/libusb.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
 #include "logsys/usb.h"
 #include "logsys/serio.h"
 
@@ -226,8 +227,8 @@ int logsys_usart_getstr(libusb_device_handle* dev, char* buf, int maxlen, int* l
 	char tmp[maxlen+1];
 	int res=libusb_interrupt_transfer(dev, LOGSYS_IN_EP6, tmp, maxlen+1, len, 0);
 	if(res>=0){
-		memcpy(buf, tmp, len-1);
-		*status=tmp[len];
+		memcpy(buf, tmp, (*len)-1);
+		*status=tmp[*len];
 	}
 	return res;
 }
