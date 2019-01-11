@@ -67,6 +67,9 @@ build/hotplug-test: build/tmp/test/hotplug.o
 build/serio-test: build/tmp/test/sio_fb.o
 	$(CC) $(CFLAGS) $^ $(LDFLAGS_COMMON) $(LDFLAGS_TEST) -o $@
 
+build/usart-test: build/tmp/test/uarttest.o
+	$(CC) $(CFLAGS) $^ $(LDFLAGS_COMMON) $(LDFLAGS_TEST) -o $@
+
 build/tmp/shared/%.o: src/shared/%.c
 	mkdir -p $(@D)
 	$(CC) $(CFLAGS) -c -fPIC $< -o $@

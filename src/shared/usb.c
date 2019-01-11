@@ -201,3 +201,22 @@ int logsys_serial_send(libusb_device_handle* dev, LogsysSerialLines send, Logsys
 	if(res<0) return res;
 	return libusb_bulk_transfer(dev, LOGSYS_IN_EP4, (char*)recv, 2, NULL, 0);
 }
+
+int logsys_tx_usart_begin(libusb_device_handle* dev, bool usrt, bool* success){
+	int res=libusb_control_transfer(dev, LOGSYS_REQTYP_IN, 49, usrt, 0, (char*)success, 1, 0);
+	if(res<0) return res;
+	//Magic numbers, yay! (Prob the clock registers)
+	// 115200bps:	0xcf 0x3
+	// 9600bps: 	0x10 0x3
+	res=libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 53, 0xcf, 0, NULL, 0, 0);
+	if(res<0) return res;
+	return libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 54, 0x3, 0, NULL, 0, 0);
+}
+
+int logsys_tx_usart_end(libusb_device_handle* dev){
+	return libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 50, 0, 0, NULL, 0, 0);
+}
+
+int logsys_usart_putstr(libusb_device_handle* dev, char* buf, int len){
+	return libusb_bulk_transfer(dev, LOGSYS_OUT_EP5, buf, len, NULL, 0);
+}

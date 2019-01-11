@@ -18,4 +18,7 @@ typedef enum{
 
 int logsys_serial_send(libusb_device_handle* dev, LogsysSerialLines send, LogsysSerialLines* recv);
 
+int logsys_usart_getstr(libusb_device_handle* dev, char* buf, int maxlen, /*out*/int* len);
+int logsys_usart_putstr(libusb_device_handle* dev, char* buf, int len);
+
 #endif //_LOGSYSDRV_SERIO_H
