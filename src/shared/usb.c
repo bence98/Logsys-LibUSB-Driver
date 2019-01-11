@@ -53,7 +53,7 @@ int logsys_tx_clk_status(libusb_device_handle* dev, LogsysClkStatus* data){
 
 int logsys_clk_start(libusb_device_handle* dev, int freqHz, bool* success){
 	LogsysClkStatus status=logsys_create_clk_status(freqHz, 2);
-	return libusb_control_transfer(dev, LOGSYS_REQTYP_IN, 4, status.periodRegL|(status.periodRegH<<8), status.prescaler<<8, (char*)success, 1, 0);
+	return libusb_control_transfer(dev, LOGSYS_REQTYP_IN, 4, TO_WORD(status.periodRegH, status.periodRegL), status.prescaler<<8, (char*)success, 1, 0);
 }
 
 int logsys_clk_stop(libusb_device_handle* dev, bool* was_running){
@@ -95,7 +95,7 @@ int logsys_tx_get_rev_curr(libusb_device_handle* dev, double* mAmps){
 	char data[2];
 	int resp=libusb_control_transfer(dev, LOGSYS_REQTYP_IN, 2, 0x0300, 0, data, 2, 0);
 	if(resp<0) return resp;
-	*mAmps=(data[1]<<8|data[0])*2560/(512*200*.2);
+	*mAmps=TO_WORD(data[1], data[0])*2560/(512*200*.2);
 	return 1;
 }
 
@@ -139,7 +139,7 @@ int logsys_tx_jtag_end(libusb_device_handle* dev){
 
 int logsys_tx_serial_begin(libusb_device_handle* dev, bool* success){
 	LogsysClkStatus status=logsys_create_clk_status(10, 4);
-	int resp=libusb_control_transfer(dev, LOGSYS_REQTYP_IN, 96, status.periodRegL|(status.periodRegH<<8), status.prescaler, (char*)success, 1, 0);
+	int resp=libusb_control_transfer(dev, LOGSYS_REQTYP_IN, 96, TO_WORD(status.periodRegH, status.periodRegL), status.prescaler, (char*)success, 1, 0);
 	if(resp<0) return resp;
 	if(*success){
 		resp=libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 98, 0, 0, NULL, 0, 0);
@@ -149,7 +149,7 @@ int logsys_tx_serial_begin(libusb_device_handle* dev, bool* success){
 
 int logsys_tx_serial_change_clk(libusb_device_handle* dev, int freqHz){
 	LogsysClkStatus status=logsys_create_clk_status(freqHz, 4);
-	return libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 99, status.periodRegL|(status.periodRegH<<8), status.prescaler, NULL, 0, 0);
+	return libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 99, TO_WORD(status.periodRegH, status.periodRegL), status.prescaler, NULL, 0, 0);
 }
 
 int logsys_tx_serial_end(libusb_device_handle* dev){
@@ -173,7 +173,7 @@ int logsys_jtag_scan(libusb_device_handle* dev, uint32_t jtag_devs[], int max_de
 		if(resp<0) break;
 		resp=libusb_bulk_transfer(dev, LOGSYS_IN_EP2, read, sizeof(req_get_id), NULL, 0);
 		if(resp<0) break;
-		uint32_t id=read[0]|(read[2]<<8)|(read[4]<<16)|(read[6]<<24);
+		uint32_t id=TO_DWORD(read[6], read[4], read[2], read[0]);
 		if(id==0||id==-1) break;
 		jtag_devs[devid]=id;
 	}
