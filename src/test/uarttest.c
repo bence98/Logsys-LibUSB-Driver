@@ -39,6 +39,12 @@ int main(void){
 		sprintf(str, "x=%d\n", x);
 		int res=logsys_usart_putstr(logsys, str, strlen(str));
 		if(res<0) fprintf(stderr, "Error: %d\n", res);
+		LogsysUsartStatus st;
+		int len=0;
+		res=logsys_usart_getstr(logsys, str, 19, &len, &st);
+		if(res<0) fprintf(stderr, "Read error: %d\n", res);
+		str[len]='\0';
+		printf("[%d] Got %s\n", st, str);
 		x++;
 		usleep(10000);
 	}

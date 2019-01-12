@@ -3,19 +3,20 @@
 
 #include "logsys/common.h"
 
-//interface number
+/** interface numbers */
 #define LOGSYS_IFN_DEV 0
 #define LOGSYS_IFN_COM 1
-//endpoints: - interface0
-//non-interrupting function endpoints
-//see also: LogsysFunction
+/** endpoints: - interface0 */
+/** non-interrupting function endpoints
+  * @see LogsysFunction
+  */
 #define LOGSYS_OUT_EP1 0x01
 #define LOGSYS_IN_EP2  0x82
 //interrupting function endpoints
 #define LOGSYS_OUT_EP3 0x03
 #define LOGSYS_IN_EP4  0x84
-// - interface1
-//COM endpoints
+/** - interface1 */
+/** COM endpoints */
 #define LOGSYS_OUT_EP5 0x05
 #define LOGSYS_IN_EP6  0x86
 
@@ -42,15 +43,16 @@ int logsys_tx_get_reset(libusb_device_handle* dev, /*out*/bool* reset);
 
 int logsys_tx_get_pwr_limit(libusb_device_handle* dev, /*out*/LogsysPwrLimit* limit);
 int logsys_tx_set_pwr_limit(libusb_device_handle* dev, LogsysPwrLimit limit);
-//correction coefficients
-//TODO: parsing unimplemented!
-//ch -> char[21]
+/** correction coefficients
+  * TODO: parsing unimplemented!
+  * @param ch -> char[21]
+  */
 int logsys_tx_get_pwr_corr(libusb_device_handle* dev, /*out*/char* ch);
 
 int logsys_tx_set_vcc(libusb_device_handle* dev, bool vcc);
 int logsys_tx_get_vcc(libusb_device_handle* dev, /*out*/ bool* vcc);
 
-//get & set reverse current tolerance. Values in milliamps
+/** get & set reverse current tolerance. Values in milliamps */
 int logsys_tx_get_rev_curr(libusb_device_handle* dev, double* mAmps);
 int logsys_tx_set_rev_curr(libusb_device_handle* dev, double mAmps);
 
@@ -63,13 +65,14 @@ int logsys_tx_serial_begin(libusb_device_handle* dev, bool* success);
 int logsys_tx_serial_change_clk(libusb_device_handle* dev, int freqHz);
 int logsys_tx_serial_end(libusb_device_handle* dev);
 
-//Performs a JTAG boundary-scan & returns the device IDs in the `jtag_devs` array and saves the number of devices in `found_devs`
-//NOTE: if there's more than `max_devs`, then only the first `max_devs` gets returned, and `found_devs` will be set to `max_devs`
+/** Performs a JTAG boundary-scan & returns the device IDs in the `jtag_devs` array and saves the number of devices in `found_devs`
+  * NOTE: if there's more than `max_devs`, then only the first `max_devs` gets returned, and `found_devs` will be set to `max_devs`
+  */
 int logsys_jtag_scan(libusb_device_handle* dev, /*out*/uint32_t jtag_devs[], int max_devs, /*out*/int* found_devs);
-//select between Write & Compare and Write & Echo modes
+/** select between Write & Compare and Write & Echo modes */
 int logsys_jtag_get_mode(libusb_device_handle* dev, /*out*/LogsysJtagMode* mode);
 int logsys_jtag_set_mode(libusb_device_handle* dev, LogsysJtagMode mode);
-//in JTAG Write & Compare mode, the development cable checks the response and this query reads the check results 
+/** in JTAG Write & Compare mode, the development cable checks the response and this query reads the check results */
 int logsys_jtag_check_error(libusb_device_handle* dev, /*out*/bool* error);
 
 int logsys_tx_usart_begin(libusb_device_handle* dev, bool usrt, /*out*/bool* success);

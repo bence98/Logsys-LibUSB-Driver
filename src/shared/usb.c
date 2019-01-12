@@ -227,7 +227,7 @@ int logsys_usart_getstr(libusb_device_handle* dev, char* buf, int maxlen, int* l
 	char tmp[maxlen+1];
 	int res=libusb_interrupt_transfer(dev, LOGSYS_IN_EP6, tmp, maxlen+1, len, 0);
 	if(res>=0){
-		memcpy(buf, tmp, (*len)-1);
+		memcpy(buf, tmp, --(*len));
 		*status=tmp[*len];
 	}
 	return res;
