@@ -5,9 +5,9 @@
 #define LOGSYS_PID 0xf0ff
 
 /** construct a 2-byte word from high & low bytes */
-#define TO_WORD(h, l) (((char)h)<<8|((char)l))
+#define TO_WORD(h, l) (((h)&255)<<8|((l)&255))
 /** construct a 4-byte dword from high -> low bytes */
-#define TO_DWORD(h, j, k, l) (((char)h)<<24|((char)j)<<16|((char)k)<<8|((char)l))
+#define TO_DWORD(h, j, k, l) (((h)&255)<<24|((j)&255)<<16|((k)&255)<<8|((l)&255))
 
 typedef struct _logsys_status{
 	char vOutL, vOutH, vJtagRefL, vJtagRefH, vIoRefL, vIoRefH;
