@@ -208,13 +208,15 @@ int logsys_serial_send(libusb_device_handle* dev, LogsysSerialLines send, Logsys
 	return libusb_bulk_transfer(dev, LOGSYS_IN_EP4, (char*)recv, 2, NULL, 0);
 }
 
-int logsys_tx_usart_begin(libusb_device_handle* dev, bool usrt, bool* success){
+int logsys_tx_usart_begin(libusb_device_handle* dev, unsigned int baud, bool usrt, bool* success){
+	if(baud<=30||baud>2000000) return -2;
 	int res=libusb_control_transfer(dev, LOGSYS_REQTYP_IN, 49, usrt, 0, (char*)success, 1, 0);
 	if(res<0) return res;
-	//Magic numbers, yay! (Prob the clock registers)
-	// 115200bps:	0xcf 0x3
-	// 9600bps: 	0x10 0x3
-	res=libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 53, 0xcf, 0, NULL, 0, 0);
+	// Calculating wValue
+	// It looks like a clock register with 1/8 prescaler
+	static int mcuFreqHz=16000000; //16 MHz
+	unsigned short wValue=(mcuFreqHz/8/baud)-1;
+	res=libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 53, wValue, 0, NULL, 0, 0);
 	if(res<0) return res;
 	return libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 54, 0x3, 0, NULL, 0, 0);
 }

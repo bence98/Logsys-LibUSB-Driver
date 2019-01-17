@@ -9,7 +9,7 @@
 #include "logsys/serio.h"
 #include "logsys/status.h"
 
-bool run=true, mode=false;
+bool run=true;
 
 void sigint_cb(int i){
 	printf("Quitting...\n");
@@ -31,13 +31,13 @@ int main(void){
 		return 2;
 	}
 	
-	logsys_tx_usart_begin(logsys, mode, &run);
+	logsys_tx_usart_begin(logsys, 115200, true, &run);
 	
 	int x=0;
 	char str[20]={0};
 	while(run){
-		sprintf(str, "x=%d\n", x);
-		int res=logsys_usart_putstr(logsys, str, strlen(str));
+		int strlen=snprintf(str, sizeof(str), "x=%d\n", x);
+		int res=logsys_usart_putstr(logsys, str, strlen);
 		if(res<0) fprintf(stderr, "Error: %d\n", res);
 		LogsysUsartStatus st;
 		int len=0;
