@@ -1,6 +1,17 @@
 UNAME=$(shell uname -s)
+ifeq ($(UNAME), Darwin)
+OS=macOS
+elseifeq ($(UNAME), Linux)
+OS=Linux
+elseifneq (MINGW, $(findstring $(UNAME)),)
+OS=Windows
+elseifneq (CYGWIN, $(findstring $(UNAME)),)
+OS=Windows
+else
+OS=N/A
+endif
+
 CC=gcc
-LIBNAME=liblogsys-drv.so
 #Release Candidate
 MAJOR=0
 #RC1
@@ -8,9 +19,15 @@ SUBVERSION=0.1
 CFLAGS=-I./include -I./libxsvf -g
 LDFLAGS_COMMON=$(shell pkg-config --libs libusb-1.0)
 LDFLAGS_TEST=-L./build -llogsys-drv
-ifeq ($(UNAME), Darwin)
+ifeq ($(OS), macOS)
+LIBNAME=liblogsys-drv.dylib
 LDFLAGS_SO=--shared -Wl,-install_name,$(LIBNAME).$(MAJOR)
+elseifeq ($(OS), Windows)
+LDFLAGS_COMMON=-lusb-1.0
+LIBNAME=liblogsys-drv.dll
+LDFLAGS_SO=-shared -Wl,--out-implib,build/$(LIBNAME).a
 else
+LIBNAME=liblogsys-drv.so
 LDFLAGS_SO=--shared -Wl,-soname,$(LIBNAME).$(MAJOR)
 endif
 
@@ -22,14 +39,13 @@ test: build/logsys-test build/hotplug-test build/serio-test
 
 clean:
 	rm -rf build
-#	find build -type f -delete
+	cd libxsvf && make clean
 
 install: build/$(LIBNAME)
 	cp $< /usr/local/lib/$(LIBNAME).$(MAJOR).$(SUBVERSION)
-ifeq ($(UNAME), Linux)
+ifeq ($(OS), Linux)
 	ldconfig /usr/local/lib
-endif
-ifeq ($(UNAME), Darwin)
+elseifeq ($(OS), macOS)
 	ln -sf /usr/local/lib/$(LIBNAME).$(MAJOR).$(SUBVERSION) /usr/local/lib/$(LIBNAME).$(MAJOR)
 endif
 	ln -sf /usr/local/lib/$(LIBNAME).$(MAJOR) /usr/local/lib/$(LIBNAME)
