@@ -27,7 +27,7 @@ You will have to compile the driver yourself
 First, you're very brave. I like that :D Second, you should *really* have a package manager (I would recommend [Homebrew](https://brew.sh/))
 
 * Before you begin, you need to install LibUSB 1.0 (for example, with Homebrew it would mean running `brew install libusb`)
-* First, clone `libxsvf`, by running `git submodule sync && git submodule update`
+* First, clone `libxsvf`, by running `git submodule init && git submodule update`
 * Then, run `make` and `sudo make install`
 * Finally, you can run `make test` to get the `logsys-test` binary in the `build` folder
 

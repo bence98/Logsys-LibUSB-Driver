@@ -17,9 +17,9 @@ MAJOR=0
 #RC1
 SUBVERSION=0.1
 CFLAGS=-I./include -I./libxsvf -g
-LDFLAGS_COMMON=$(shell pkg-config --libs libusb-1.0)
 LDFLAGS_TEST=-L./build -llogsys-drv
 ifeq ($(OS), macOS)
+LDFLAGS_COMMON=-lusb-1.0
 LIBNAME=liblogsys-drv.dylib
 LDFLAGS_SO=--shared -Wl,-install_name,$(LIBNAME).$(MAJOR)
 else ifeq ($(OS), Windows)
@@ -27,6 +27,7 @@ LDFLAGS_COMMON=-lusb-1.0
 LIBNAME=liblogsys-drv.dll
 LDFLAGS_SO=-shared -Wl,--out-implib,build/$(LIBNAME).a
 else
+LDFLAGS_COMMON=$(shell pkg-config --libs libusb-1.0)
 LIBNAME=liblogsys-drv.so
 LDFLAGS_SO=--shared -Wl,-soname,$(LIBNAME).$(MAJOR)
 endif

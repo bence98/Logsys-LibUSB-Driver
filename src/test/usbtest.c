@@ -31,6 +31,10 @@ size_t parse_tokens(char* tokens[], size_t token_count){
 	char quot_char=0;
 	tokens[token]=malloc(ln_len);
 	for(size_t idx=0;idx<ln_len;idx++){
+		if(token==token_count){
+			free(ln);
+			return token;
+		}
 		if(ln[idx]==' '&&quot_char==0 || ln[idx]==quot_char){
 			if(tok_len>0){
 				tokens[token][tok_len]='\0';
