@@ -1,11 +1,11 @@
 UNAME=$(shell uname -s)
 ifeq ($(UNAME), Darwin)
 OS=macOS
-elseifeq ($(UNAME), Linux)
+else ifeq ($(UNAME), Linux)
 OS=Linux
-elseifneq (MINGW, $(findstring $(UNAME)),)
+else ifneq ($(findstring MINGW, $(UNAME)),)
 OS=Windows
-elseifneq (CYGWIN, $(findstring $(UNAME)),)
+else ifneq ($(findstring CYGWIN, $(UNAME)),)
 OS=Windows
 else
 OS=N/A
@@ -22,7 +22,7 @@ LDFLAGS_TEST=-L./build -llogsys-drv
 ifeq ($(OS), macOS)
 LIBNAME=liblogsys-drv.dylib
 LDFLAGS_SO=--shared -Wl,-install_name,$(LIBNAME).$(MAJOR)
-elseifeq ($(OS), Windows)
+else ifeq ($(OS), Windows)
 LDFLAGS_COMMON=-lusb-1.0
 LIBNAME=liblogsys-drv.dll
 LDFLAGS_SO=-shared -Wl,--out-implib,build/$(LIBNAME).a
@@ -45,7 +45,7 @@ install: build/$(LIBNAME)
 	cp $< /usr/local/lib/$(LIBNAME).$(MAJOR).$(SUBVERSION)
 ifeq ($(OS), Linux)
 	ldconfig /usr/local/lib
-elseifeq ($(OS), macOS)
+else ifeq ($(OS), macOS)
 	ln -sf /usr/local/lib/$(LIBNAME).$(MAJOR).$(SUBVERSION) /usr/local/lib/$(LIBNAME).$(MAJOR)
 endif
 	ln -sf /usr/local/lib/$(LIBNAME).$(MAJOR) /usr/local/lib/$(LIBNAME)
