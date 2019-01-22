@@ -7,6 +7,8 @@ else ifneq ($(findstring MINGW, $(UNAME)),)
 OS=Windows
 else ifneq ($(findstring CYGWIN, $(UNAME)),)
 OS=Windows
+else ifeq ($(UNAME), Haiku)
+OS=Haiku
 else
 OS=N/A
 endif
@@ -19,17 +21,19 @@ SUBVERSION=0.1
 CFLAGS=-I./include -I./libxsvf -g
 LDFLAGS_TEST=-L./build -llogsys-drv
 ifeq ($(OS), macOS)
-LDFLAGS_COMMON=-lusb-1.0
 LIBNAME=liblogsys-drv.dylib
 LDFLAGS_SO=--shared -Wl,-install_name,$(LIBNAME).$(MAJOR)
 else ifeq ($(OS), Windows)
-LDFLAGS_COMMON=-lusb-1.0
 LIBNAME=liblogsys-drv.dll
 LDFLAGS_SO=-shared -Wl,--out-implib,build/$(LIBNAME).a
 else
-LDFLAGS_COMMON=$(shell pkg-config --libs libusb-1.0)
 LIBNAME=liblogsys-drv.so
 LDFLAGS_SO=--shared -Wl,-soname,$(LIBNAME).$(MAJOR)
+endif
+
+LDFLAGS_COMMON=$(shell pkg-config --libs libusb-1.0)
+ifeq ($(LDFLAGS_COMMON),)
+LDFLAGS_COMMON=-lusb-1.0
 endif
 
 OBJS_SO=build/tmp/shared/usb.o build/tmp/shared/status.o build/tmp/shared/jconf.o
