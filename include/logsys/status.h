@@ -1,11 +1,12 @@
+/** @file status.h LOGSYS status code processing */
 #ifndef _LOGSYSDRV_STATUS_H
 #define _LOGSYSDRV_STATUS_H
 
 #include "logsys/common.h"
 
-/** @returns supply voltage */
+/** @returns Supply voltage */
 double logsys_get_vcc_out(LogsysStatus status);
-/** @returnsJTAG reference voltage */
+/** @returns JTAG reference voltage */
 double logsys_get_vjtag_out(LogsysStatus status);
 /** @returns I/O reference voltage */
 double logsys_get_vio_out(LogsysStatus status);
@@ -14,6 +15,7 @@ double logsys_get_vio_out(LogsysStatus status);
 double logsys_get_current_ma(LogsysStatus status);
 
 /** @returns clock frequency in Hz
+  * @param status The clock status object
   * @param divisor 2 for the standard clock and 4 for the Serial port clock
   */
 double logsys_get_clk_freq_hz(LogsysClkStatus status, double divisor);
