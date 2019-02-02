@@ -2,6 +2,7 @@
 #ifndef _LOGSYSDRV_USB_H
 #define _LOGSYSDRV_USB_H
 
+#include "logsys/usb.private.h"
 #include "logsys/common.h"
 
 /** Set up LibUSB

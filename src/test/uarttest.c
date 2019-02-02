@@ -31,7 +31,7 @@ int main(void){
 		return 2;
 	}
 	
-	logsys_tx_usart_begin(logsys, 115200, true, &run);
+	logsys_tx_usart_begin(logsys, 115200, true, DATA_BITS_8, 0, &run);
 	
 	int x=0;
 	char str[20]={0};
