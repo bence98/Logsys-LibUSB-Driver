@@ -23,8 +23,6 @@
 #define LOGSYS_REQTYP_IN  0xc0
 #define LOGSYS_REQTYP_OUT 0x40
 
-#define LOGSYS_DLEN_REQ48 24
-
 bool logsys_was_init=false;
 
 bool logsys_usb_init(){
@@ -228,7 +226,11 @@ int logsys_serial_send(libusb_device_handle* dev, LogsysSerialLines send, Logsys
 	return libusb_bulk_transfer(dev, LOGSYS_IN_EP4, (char*)recv, 2, NULL, 0);
 }
 
-int logsys_tx_usart_begin(libusb_device_handle* dev, unsigned int baud, bool usrt, bool* success){
+int logsys_usart_get_caps(libusb_device_handle* dev, LogsysUsartCaps* capabilities){
+	return libusb_control_transfer(dev, LOGSYS_REQTYP_IN, 48, 0, 0, (char*)capabilities, sizeof(LogsysUsartCaps), 0);
+}
+
+int logsys_tx_usart_begin(libusb_device_handle* dev, unsigned int baud, bool usrt, LogsysUsartEncoding enc, LogsysUsartParity parity, bool* success){
 	if(baud<=30||baud>2000000) return -2;
 	int res=libusb_control_transfer(dev, LOGSYS_REQTYP_IN, 49, usrt, 0, (char*)success, 1, 0);
 	if(res<0) return res;
@@ -238,7 +240,7 @@ int logsys_tx_usart_begin(libusb_device_handle* dev, unsigned int baud, bool usr
 	unsigned short wValue=(mcuFreqHz/8/baud)-1;
 	res=libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 53, wValue, 0, NULL, 0, 0);
 	if(res<0) return res;
-	return libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 54, 0x3, 0, NULL, 0, 0);
+	return libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 54, enc, parity, NULL, 0, 0);
 }
 
 int logsys_tx_usart_end(libusb_device_handle* dev){
