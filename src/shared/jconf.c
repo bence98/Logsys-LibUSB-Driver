@@ -210,7 +210,7 @@ int logsys_jtag_dl_xsvf(libusb_device_handle* dev, void* f){
 void* logsys_conv_bit2svf(char* bitfile){
 	int fdLastDir=open(".", O_DIRECTORY);
 	chdir("/tmp");
-	void* impactCmd=popen("/opt/Xilinx/*/ISE_DS/ISE/bin/lin64/impact -batch", "w");
+	void* impactCmd=popen("$XILINX/bin/lin64/impact -batch", "w");
 	fprintf(impactCmd, "setPreference -pref StartupClock:AUTO_CORRECTION\n\
 setPreference -pref AutoSignature:FALSE\nsetPreference -pref KeepSVF:FALSE\n\
 setPreference -pref ConcurrentMode:FALSE\nsetPreference -pref UseHighz:FALSE\n\

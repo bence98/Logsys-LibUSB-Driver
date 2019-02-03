@@ -20,6 +20,7 @@ This repository contains the Linux-compatible/cross-platform<sup>1</sup> driver 
 * libusb-1.0 (version 0.1 is not supported!)
 * (for building) libusb-1.0-dev
 * [optional] udev (we provide a udev rule to allow an unprivileged user to use the device)
+* [optional, for BIT format support] XILINX ISE, with `$XILINX` exported
 
 ## Compiling the driver
 
