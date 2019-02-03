@@ -36,7 +36,7 @@ ifeq ($(LDFLAGS_COMMON),)
 LDFLAGS_COMMON=-lusb-1.0
 endif
 
-OBJS_SO=build/tmp/shared/usb.o build/tmp/shared/status.o build/tmp/shared/jconf.o
+OBJS_SO=build/tmp/shared/control.o build/tmp/shared/jconf.o build/tmp/shared/jctrl.o build/tmp/shared/usb.o build/tmp/shared/serio.o build/tmp/shared/status.o
 
 all: build/$(LIBNAME)
 
