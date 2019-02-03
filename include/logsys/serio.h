@@ -49,6 +49,13 @@ typedef enum{
 	PARITY_NONE, PARITY_EVEN, PARITY_ODD
 } LogsysUsartParity;
 
+/** Begin BitBang Serial I/O */
+int logsys_tx_serial_begin(libusb_device_handle* dev, bool* success);
+/** Change BitBang Serial I/O clock frequency */
+int logsys_tx_serial_change_clk(libusb_device_handle* dev, int freqHz);
+/** End BitBang Serial I/O */
+int logsys_tx_serial_end(libusb_device_handle* dev);
+
 /** Sends and receives BitBang I/O data */
 int logsys_serial_send(libusb_device_handle* dev, LogsysSerialLines send, LogsysSerialLines* recv);
 
