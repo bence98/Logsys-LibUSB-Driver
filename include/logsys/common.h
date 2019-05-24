@@ -19,7 +19,7 @@ typedef struct{
 	char flagPwr, flagPin;
 } LogsysStatus;
 
-/** Data from @link #logsys_tx_clk_status()@endlink */
+/** Data from @link #logsys_clk_status()@endlink */
 typedef struct{
 	bool active;
 	char periodRegL, periodRegH, prescaler;

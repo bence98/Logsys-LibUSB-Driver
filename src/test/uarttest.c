@@ -31,7 +31,7 @@ int main(void){
 		return 2;
 	}
 	
-	logsys_tx_usart_begin(logsys, 115200, true, DATA_BITS_8, 0, &run);
+	logsys_usart_begin(logsys, 115200, true, DATA_BITS_8, 0, &run);
 	
 	int x=0;
 	char str[20]={0};
@@ -49,7 +49,7 @@ int main(void){
 		usleep(10000);
 	}
 	printf("Exiting...\n");
-	logsys_tx_usart_end(logsys);
+	logsys_usart_end(logsys);
 	logsys_usb_close(logsys);
 	logsys_usb_end();
 	return 0;

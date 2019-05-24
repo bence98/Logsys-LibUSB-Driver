@@ -3,9 +3,9 @@
 #define _LOGSYSDRV_JCONF_H
 
 /** Begin JTAG transmission */
-int logsys_tx_jtag_begin(libusb_device_handle* dev, LogsysJtagMode mode, /*out*/bool* ready);
+int logsys_jtag_begin(libusb_device_handle* dev, LogsysJtagMode mode, /*out*/bool* ready);
 /** End JTAG transmission */
-int logsys_tx_jtag_end(libusb_device_handle* dev);
+int logsys_jtag_end(libusb_device_handle* dev);
 
 /** Performs a JTAG boundary-scan & returns the device IDs in the `jtag_devs` array and saves the number of devices in `found_devs`
   * @note if there's more than `max_devs`, then only the first `max_devs` gets returned, and `found_devs` will be set to `max_devs`

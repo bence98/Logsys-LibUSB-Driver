@@ -7,7 +7,7 @@ int logsys_tx_get_status(libusb_device_handle* dev, LogsysStatus* data){
 	return libusb_control_transfer(dev, LOGSYS_REQTYP_IN, 1, 0, 0, (char*)data, sizeof(LogsysStatus), 0);
 }
 
-int logsys_tx_clk_status(libusb_device_handle* dev, LogsysClkStatus* data){
+int logsys_clk_status(libusb_device_handle* dev, LogsysClkStatus* data){
 	return libusb_control_transfer(dev, LOGSYS_REQTYP_IN, 4, 0, 0x02, (char*)data, sizeof(LogsysClkStatus), 0);
 }
 

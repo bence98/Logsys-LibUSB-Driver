@@ -102,14 +102,14 @@ void lsvf_flush_iobuf(struct udata_s* u){
 int lsvf_host_setup(struct libxsvf_host *h){
 	bool ok;
 	struct udata_s* u=h->user_data;
-	logsys_tx_jtag_begin(u->dev, MODE_CMP, &ok);
+	logsys_jtag_begin(u->dev, MODE_CMP, &ok);
 	return ok?0:-1;
 }
 
 int lsvf_host_shutdown(struct libxsvf_host *h){
 	struct udata_s* u=h->user_data;
 	lsvf_flush_iobuf(u);
-	logsys_tx_jtag_end(u->dev);
+	logsys_jtag_end(u->dev);
 	return 0;
 }
 

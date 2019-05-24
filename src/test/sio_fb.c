@@ -69,7 +69,7 @@ int main(void){
 		return 2;
 	}
 	
-	logsys_tx_serial_begin(logsys, &run);
+	logsys_serial_begin(logsys, &run);
 	
 	int x=0;
 	while(run){
@@ -94,7 +94,7 @@ int main(void){
 		usleep(10000);
 	}
 	printf("Exiting...\n");
-	logsys_tx_serial_end(logsys);
+	logsys_serial_end(logsys);
 	logsys_usb_close(logsys);
 	logsys_usb_end();
 	return 0;

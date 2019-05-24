@@ -82,7 +82,7 @@ int main(void){
 	while(parse_tokens(cmd, 3)>0){
 		int res;
 		if(cmd_cmp(cmd, 0, "status")){
-				LogsysStatus status={0};
+				LogsysStatus status;
 				res=logsys_tx_get_status(logsys, &status);
 				if(res<0){
 					fprintf(stderr, "Failed! %s\n", libusb_error_name(res));
@@ -109,8 +109,8 @@ int main(void){
 				);
 		}else if(cmd_cmp(cmd, 0, "clk")){
 			if(cmd_cmp(cmd, 1, "status")){
-				LogsysClkStatus clkStatus={0};
-				res=logsys_tx_clk_status(logsys, &clkStatus);
+				LogsysClkStatus clkStatus;
+				res=logsys_clk_status(logsys, &clkStatus);
 				if(res<0){
 					fprintf(stderr, "Failed! %s\n", libusb_error_name(res));
 					continue;
@@ -139,7 +139,7 @@ int main(void){
 		}else if(cmd_cmp(cmd, 0, "pwrlim")){
 			if(cmd_cmp(cmd, 1, "get")){
 				char buf2[21];
-				LogsysPwrLimit limit={0};
+				LogsysPwrLimit limit;
 				res=logsys_tx_get_pwr_limit(logsys, &limit);
 				if(res<0){
 					fprintf(stderr, "Failed! %s\n", libusb_error_name(res));
@@ -202,7 +202,7 @@ int main(void){
 		}else if(cmd_cmp(cmd, 0, "jtag")){
 			if(cmd_cmp(cmd, 1, "scan")){
 				bool ready;
-				res=logsys_tx_jtag_begin(logsys, MODE_ECHO, &ready);
+				res=logsys_jtag_begin(logsys, MODE_ECHO, &ready);
 				if(res<0){
 					fprintf(stderr, "Begin failed! %s\n", libusb_error_name(res));
 					continue;
@@ -221,7 +221,7 @@ int main(void){
 				printf("%d devices:\n", dev_len);
 				for(int i=0;i<dev_len;i++)
 					printf("  0x%.8X\n", devs[i]);
-				res=logsys_tx_jtag_end(logsys);
+				res=logsys_jtag_end(logsys);
 				if(res<0)
 					fprintf(stderr, "End failed! %s\n", libusb_error_name(res));
 			}else{

@@ -50,11 +50,11 @@ typedef enum{
 } LogsysUsartParity;
 
 /** Begin BitBang Serial I/O */
-int logsys_tx_serial_begin(libusb_device_handle* dev, bool* success);
+int logsys_serial_begin(libusb_device_handle* dev, bool* success);
 /** Change BitBang Serial I/O clock frequency */
-int logsys_tx_serial_change_clk(libusb_device_handle* dev, int freqHz);
+int logsys_serial_change_clk(libusb_device_handle* dev, int freqHz);
 /** End BitBang Serial I/O */
-int logsys_tx_serial_end(libusb_device_handle* dev);
+int logsys_serial_end(libusb_device_handle* dev);
 
 /** Sends and receives BitBang I/O data */
 int logsys_serial_send(libusb_device_handle* dev, LogsysSerialLines send, LogsysSerialLines* recv);
@@ -63,9 +63,9 @@ int logsys_serial_send(libusb_device_handle* dev, LogsysSerialLines send, Logsys
 int logsys_usart_get_caps(libusb_device_handle* dev, /*out*/LogsysUsartCaps* capabilities);
 
 /** Begin USART */
-int logsys_tx_usart_begin(libusb_device_handle* dev, unsigned int baud, bool usrt, LogsysUsartEncoding enc, LogsysUsartParity parity, /*out*/bool* success);
+int logsys_usart_begin(libusb_device_handle* dev, unsigned int baud, bool usrt, LogsysUsartEncoding enc, LogsysUsartParity parity, /*out*/bool* success);
 /** End USART */
-int logsys_tx_usart_end(libusb_device_handle* dev);
+int logsys_usart_end(libusb_device_handle* dev);
 
 /** Gets data from USART
   * @param dev LOGSYS device

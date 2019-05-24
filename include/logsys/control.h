@@ -7,7 +7,7 @@
 int logsys_tx_get_status(libusb_device_handle* dev, /*out*/LogsysStatus* data);
 
 /** Get the @link LogsysClkStatus clock status@endlink of the device */
-int logsys_tx_clk_status(libusb_device_handle* dev, /*out*/LogsysClkStatus* data);
+int logsys_clk_status(libusb_device_handle* dev, /*out*/LogsysClkStatus* data);
 /** Starts the clock */
 int logsys_clk_start(libusb_device_handle* dev, int freqHz, bool* success);
 /** Stops the clock */

@@ -4,7 +4,7 @@
 #include "logsys/usb.private.h"
 #include "logsys/serio.h" 
 
-int logsys_tx_serial_begin(libusb_device_handle* dev, bool* success){
+int logsys_serial_begin(libusb_device_handle* dev, bool* success){
 	LogsysClkStatus status=logsys_create_clk_status(10, 4);
 	int resp=libusb_control_transfer(dev, LOGSYS_REQTYP_IN, 96, TO_WORD(status.periodRegH, status.periodRegL), status.prescaler, (char*)success, 1, 0);
 	if(resp<0) return resp;
@@ -14,12 +14,12 @@ int logsys_tx_serial_begin(libusb_device_handle* dev, bool* success){
 	return resp;
 }
 
-int logsys_tx_serial_change_clk(libusb_device_handle* dev, int freqHz){
+int logsys_serial_change_clk(libusb_device_handle* dev, int freqHz){
 	LogsysClkStatus status=logsys_create_clk_status(freqHz, 4);
 	return libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 99, TO_WORD(status.periodRegH, status.periodRegL), status.prescaler, NULL, 0, 0);
 }
 
-int logsys_tx_serial_end(libusb_device_handle* dev){
+int logsys_serial_end(libusb_device_handle* dev){
 	return libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 97, 0, 0, NULL, 0, 0);
 }
 
@@ -33,7 +33,7 @@ int logsys_usart_get_caps(libusb_device_handle* dev, LogsysUsartCaps* capabiliti
 	return libusb_control_transfer(dev, LOGSYS_REQTYP_IN, 48, 0, 0, (char*)capabilities, sizeof(LogsysUsartCaps), 0);
 }
 
-int logsys_tx_usart_begin(libusb_device_handle* dev, unsigned int baud, bool usrt, LogsysUsartEncoding enc, LogsysUsartParity parity, bool* success){
+int logsys_usart_begin(libusb_device_handle* dev, unsigned int baud, bool usrt, LogsysUsartEncoding enc, LogsysUsartParity parity, bool* success){
 	if(baud<=30||baud>2000000) return -2;
 	int res=libusb_control_transfer(dev, LOGSYS_REQTYP_IN, 49, usrt, 0, (char*)success, 1, 0);
 	if(res<0) return res;
@@ -46,7 +46,7 @@ int logsys_tx_usart_begin(libusb_device_handle* dev, unsigned int baud, bool usr
 	return libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 54, enc, parity, NULL, 0, 0);
 }
 
-int logsys_tx_usart_end(libusb_device_handle* dev){
+int logsys_usart_end(libusb_device_handle* dev){
 	return libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 50, 0, 0, NULL, 0, 0);
 }
 

@@ -3,7 +3,7 @@
 #include "logsys/usb.h"
 #include "logsys/usb.private.h"
 
-int logsys_tx_jtag_begin(libusb_device_handle* dev, LogsysJtagMode mode, bool* ready){
+int logsys_jtag_begin(libusb_device_handle* dev, LogsysJtagMode mode, bool* ready){
 	int resp=libusb_control_transfer(dev, LOGSYS_REQTYP_IN,  16, mode, 0, (char*)ready, 1, 0);
 	if(resp<0) return resp;
 	if(!ready) return -1;
@@ -25,7 +25,7 @@ int logsys_tx_jtag_begin(libusb_device_handle* dev, LogsysJtagMode mode, bool* r
 	return resp;
 }
 
-int logsys_tx_jtag_end(libusb_device_handle* dev){
+int logsys_jtag_end(libusb_device_handle* dev){
 	return libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 17, 0, 0, NULL, 0, 0);
 }
 
