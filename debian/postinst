@@ -1,4 +1,4 @@
 #!/bin/sh
 set -e
-ldconfig /usr/local/lib
+#ldconfig /usr/lib
 udevadm control --reload

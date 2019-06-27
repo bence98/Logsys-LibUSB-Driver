@@ -1,0 +1,8 @@
+logsys-drv (0-rc3) bionic; urgency=medium
+
+  * Created source package
+  * Added USART coding options
+  * Use "$XILINX" variable to find iMPACT
+  * API changes
+
+ -- Bence Csókás <bence98@sch.bme.hu>  Thu, 27 Jun 2019 19:47:50 +0200

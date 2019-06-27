@@ -55,8 +55,6 @@ else ifeq ($(OS), macOS)
 endif
 	ln -sf /usr/local/lib/$(LIBNAME).$(MAJOR) /usr/local/lib/$(LIBNAME)
 
-deb: build/logsys-drv.deb
-
 prep-pkg: build/$(LIBNAME) build/logsys-test
 	mkdir -p $(DESTDIR)/usr/lib/
 	mkdir -p $(DESTDIR)/usr/bin/
@@ -64,17 +62,12 @@ prep-pkg: build/$(LIBNAME) build/logsys-test
 	cp -R include $(DESTDIR)/usr/include
 	cp libxsvf/*.h $(DESTDIR)/usr/include
 	cp $< $(DESTDIR)/usr/lib/$(LIBNAME).$(MAJOR).$(SUBVERSION)
-	cd $(DESTDIR)/usr/lib/; ln -s $(LIBNAME).$(MAJOR) $(LIBNAME)
+	cd $(DESTDIR)/usr/lib/; ln -s $(LIBNAME).$(MAJOR) $(LIBNAME); ln -s $(LIBNAME).$(MAJOR).$(SUBVERSION) $(LIBNAME).$(MAJOR)
 	cp $(word 2,$^) $(DESTDIR)/usr/bin/
 	./udev-rule.sh $(DESTDIR)
 
 libxsvf/libxsvf.a:
 	cd libxsvf; $(MAKE) $(notdir $@)
-
-build/logsys-drv.deb: build/$(LIBNAME) build/logsys-test
-	DESTDIR=build/logsys-drv make prep-pkg
-	cp -LR DEBIAN build/logsys-drv/
-	cd build; dpkg-deb --build logsys-drv
 
 build/$(LIBNAME): $(OBJS_SO) libxsvf/libxsvf.a
 	$(CC) $(CFLAGS) $^ $(LDFLAGS_COMMON) $(LDFLAGS_SO) -o $@

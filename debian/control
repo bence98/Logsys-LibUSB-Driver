@@ -1,0 +1,16 @@
+Source: logsys-drv
+Section: base
+Priority: optional
+Maintainer: Bence Csókás <bence98@sch.bme.hu>
+Vcs-Git: https://github.com/bence98/Logsys-LibUSB-Driver.git
+Build-Depends: libusb-1.0-0-dev (>= 1.0.21), debhelper (>=11.1.6)
+#Built-Using: libxsvf # Has no Ubuntu package
+Standards-Version: 4.1.0
+
+Package: logsys-drv
+Version: 0-rc2
+Architecture: amd64
+Depends: libusb-1.0-0 (>= 1.0.21)
+Homepage: http://users.hszk.bme.hu/~cb1719/xil-lin.php
+Description: LOGSYS driver
+ A driver for the LOGSYS development cable

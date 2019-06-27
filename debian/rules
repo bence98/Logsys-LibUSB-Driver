@@ -1,0 +1,10 @@
+#!/usr/bin/make -f
+
+override_dh_auto_install:
+	make DESTDIR=debian/logsys-drv prep-pkg
+
+override_dh_shlibdeps:
+	dh_shlibdeps -ldebian/logsys-drv/usr/lib
+
+%:
+	dh $@
