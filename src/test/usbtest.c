@@ -83,7 +83,7 @@ int main(void){
 		int res;
 		if(cmd_cmp(cmd, 0, "status")){
 				LogsysStatus status;
-				res=logsys_tx_get_status(logsys, &status);
+				res=logsys_get_status(logsys, &status);
 				if(res<0){
 					fprintf(stderr, "Failed! %s\n", libusb_error_name(res));
 					continue;
@@ -140,7 +140,7 @@ int main(void){
 			if(cmd_cmp(cmd, 1, "get")){
 				char buf2[21];
 				LogsysPwrLimit limit;
-				res=logsys_tx_get_pwr_limit(logsys, &limit);
+				res=logsys_get_pwr_limit(logsys, &limit);
 				if(res<0){
 					fprintf(stderr, "Failed! %s\n", libusb_error_name(res));
 					continue;
@@ -148,7 +148,7 @@ int main(void){
 				printf("Max power: %d mA\n",
 					limit==L450mA?450:limit==L700mA?700:limit==L950mA?950:-1
 				);
-				res=logsys_tx_get_pwr_corr(logsys, buf2);
+				res=logsys_get_pwr_corr(logsys, buf2);
 				if(res<0){
 					fprintf(stderr, "Failed! %s\n", libusb_error_name(res));
 					continue;
@@ -159,16 +159,16 @@ int main(void){
 			}
 		}else if(cmd_cmp(cmd, 0, "vcc")){
 			if(cmd_cmp(cmd, 1, "on")){
-				res=logsys_tx_set_vcc(logsys, true);
+				res=logsys_set_vcc(logsys, true);
 				if(res<0)
 					fprintf(stderr, "Failed! %s\n", libusb_error_name(res));
 			}else if(cmd_cmp(cmd, 1, "off")){
-				res=logsys_tx_set_vcc(logsys, false);
+				res=logsys_set_vcc(logsys, false);
 				if(res<0)
 					fprintf(stderr, "Failed! %s\n", libusb_error_name(res));
 			}else if(cmd_cmp(cmd, 1, "get")){
 				bool vcc;
-				res=logsys_tx_get_vcc(logsys, &vcc);
+				res=logsys_get_vcc(logsys, &vcc);
 				if(res<0)
 					fprintf(stderr, "Failed! %s\n", libusb_error_name(res));
 				printf("VCC %s\n", vcc?"high":"low");
@@ -178,21 +178,21 @@ int main(void){
 		}else if(cmd_cmp(cmd, 0, "rst")){
 			if(cmd_cmp(cmd, 1, "on")){
 				bool ok;
-				res=logsys_tx_set_reset(logsys, true, &ok);
+				res=logsys_set_reset(logsys, true, &ok);
 				if(res<0)
 					fprintf(stderr, "Failed! %s\n", libusb_error_name(res));
 				if(!ok)
 					fprintf(stderr, "Could not drive RST! (already in use)\n");
 			}else if(cmd_cmp(cmd, 1, "off")){
 				bool ok;
-				res=logsys_tx_set_reset(logsys, false, &ok);
+				res=logsys_set_reset(logsys, false, &ok);
 				if(res<0)
 					fprintf(stderr, "Failed! %s\n", libusb_error_name(res));
 				if(!ok)
 					fprintf(stderr, "Could not drive RST! (already in use?)\n");
 			}else if(cmd_cmp(cmd, 1, "get")){
 				bool rst;
-				res=logsys_tx_get_reset(logsys, &rst);
+				res=logsys_get_reset(logsys, &rst);
 				if(res<0)
 					fprintf(stderr, "Failed! %s\n", libusb_error_name(res));
 				printf("RST %s\n", rst?"high":"low");

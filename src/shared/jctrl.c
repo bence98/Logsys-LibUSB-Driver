@@ -16,7 +16,7 @@ int logsys_jtag_begin(libusb_device_handle* dev, LogsysJtagMode mode, bool* read
 	resp=libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 18, 0, 0, NULL, 0, 0);
 	if(resp<0) return resp;
 	//we read 2 bytes
-	//NOTE to self: it looks like `logsys_tx_get_active_func()`, except the wLength
+	//NOTE to self: it looks like `logsys_get_active_func()`, except the wLength
 	char tmp[2];
 	resp=libusb_control_transfer(dev, LOGSYS_REQTYP_IN,  3, 0, 0, tmp, 2, 0);
 	//this was in the disassembly of L-GUI, no clue why

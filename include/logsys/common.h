@@ -12,7 +12,7 @@
 /** construct a 4-byte dword from high -> low bytes */
 #define TO_DWORD(h, j, k, l) (((h)&255)<<24|((j)&255)<<16|((k)&255)<<8|((l)&255))
 
-/** Data from @link #logsys_tx_get_status()@endlink */
+/** Data from @link #logsys_get_status()@endlink */
 typedef struct{
 	char vOutL, vOutH, vJtagRefL, vJtagRefH, vIoRefL, vIoRefH;
 	char iOutDetailL, iOutDetailH, iOutL, iOutH;
@@ -26,12 +26,12 @@ typedef struct{
 } LogsysClkStatus;
 
 
-/** Data from @link logsys_tx_get_pwr_limit()@endlink */
+/** Data from @link logsys_get_pwr_limit()@endlink */
 typedef enum{
 	L450mA, L700mA, L950mA
 } LogsysPwrLimit;
 
-/** Data from @link #logsys_tx_get_active_func()@endlink
+/** Data from @link #logsys_get_active_func()@endlink
   * @see LogsysJtagMode
   */
 typedef enum{
