@@ -49,6 +49,17 @@ typedef enum{
 	PARITY_NONE, PARITY_EVEN, PARITY_ODD
 } LogsysUsartParity;
 
+/** SPI clock frequency */
+typedef enum{
+	SPI_8MHZ,
+	SPI_4MHZ,
+	SPI_2MHZ,
+	SPI_1MHZ
+} LogsysSpiSpeed;
+
+/** SPI mode (unknown) */
+typedef int LogsysSpiMode;
+
 /** Begin BitBang Serial I/O */
 int logsys_serial_begin(libusb_device_handle* dev, bool* success);
 /** Change BitBang Serial I/O clock frequency */
@@ -82,5 +93,10 @@ int logsys_usart_getstr(libusb_device_handle* dev, char* buf, int maxlen, /*out*
   * @param len length of `buf`
   */
 int logsys_usart_putstr(libusb_device_handle* dev, char* buf, int len);
+
+/** Begin SPI */
+int logsys_spi_begin(libusb_device_handle* dev, LogsysSpiSpeed freq, LogsysSpiMode mode);
+/** End SPI */
+int logsys_spi_end(libusb_device_handle* dev);
 
 #endif //_LOGSYSDRV_SERIO_H

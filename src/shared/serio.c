@@ -63,3 +63,13 @@ int logsys_usart_getstr(libusb_device_handle* dev, char* buf, int maxlen, int* l
 int logsys_usart_putstr(libusb_device_handle* dev, char* buf, int len){
 	return libusb_bulk_transfer(dev, LOGSYS_OUT_EP5, buf, len, NULL, 0);
 }
+
+int logsys_spi_begin(libusb_device_handle* dev, LogsysSpiSpeed freq, LogsysSpiMode mode, bool* success){
+	int res=libusb_control_transfer(dev, LOGSYS_REQTYP_IN, 32, (1<<freq)-1, mode, (char*)success, 1, 0);
+	if(res<0) return res;
+	return libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 34, 0, 0, NULL, 0, 0);
+}
+
+int logsys_spi_end(libusb_device_handle* dev){
+	return libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 33, 0, 0, NULL, 0, 0);
+}
