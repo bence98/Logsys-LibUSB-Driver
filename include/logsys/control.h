@@ -1,3 +1,4 @@
+/** @file control.h Basic LOGSYS controls (VCC, CLK, RST etc.) */
 #ifndef _LOGSYSDRV_CTRL_H
 #define _LOGSYSDRV_CTRL_H
 

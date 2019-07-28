@@ -10,6 +10,7 @@
 #include <fcntl.h>
 #include "libxsvf.h"
 #include "logsys/usb.h"
+#include "logsys/usb.private.h"
 #include "logsys/jconf.h"
 
 struct jtag_lines{

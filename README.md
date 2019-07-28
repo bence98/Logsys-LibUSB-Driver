@@ -2,7 +2,7 @@
 
 This repository contains the Linux-compatible/cross-platform<sup>1</sup> driver for the [LOGSYS](http://logsys.mit.bme.hu) Development Cable.
 
-[RC2](https://github.com/bence98/Logsys-LibUSB-Driver/releases) is out and available for download!
+[RC3](https://github.com/bence98/Logsys-LibUSB-Driver/releases) is out and available for download!
 
 ## Features
 * Reading device status
