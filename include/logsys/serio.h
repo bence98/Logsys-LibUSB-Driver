@@ -60,6 +60,32 @@ typedef enum{
 /** SPI mode (unknown) */
 typedef int LogsysSpiMode;
 
+/** SPI commands (mostly for SPI flash chips) */
+typedef enum{
+	/** Write status register */
+	SPI_WR_STATUS_REG=1,
+	/** Page program */
+	SPI_PAGE_PROG,
+	/** Read data from flash */
+	SPI_RD,
+	/** Disable writing */
+	SPI_WR_DIS,
+	/** Read status register */
+	SPI_RD_STATUS_REG,
+	/** Enable writing */
+	SPI_WR_EN,
+	/** Erase a 4k block */
+	SPI_ERASE_4K=32,
+	/** Unprotect sector */
+	SPI_SECT_UNPROT=57,
+	/** Read JEDEC ID of the chip */
+	SPI_RD_ID=159,
+	/** Erase chip */
+	SPI_CLEAR=199,
+	/** Erase a 64k block */
+	SPI_ERASE_64K=216
+} LogsysSpiCmd;
+
 /** Begin BitBang Serial I/O */
 int logsys_serial_begin(libusb_device_handle* dev, bool* success);
 /** Change BitBang Serial I/O clock frequency */
@@ -95,8 +121,11 @@ int logsys_usart_getstr(libusb_device_handle* dev, char* buf, int maxlen, /*out*
 int logsys_usart_putstr(libusb_device_handle* dev, char* buf, int len);
 
 /** Begin SPI */
-int logsys_spi_begin(libusb_device_handle* dev, LogsysSpiSpeed freq, LogsysSpiMode mode);
+int logsys_spi_begin(libusb_device_handle* dev, LogsysSpiSpeed freq, LogsysSpiMode mode, bool* success);
 /** End SPI */
 int logsys_spi_end(libusb_device_handle* dev);
+
+/** Send SPI command */
+int logsys_spi_cmd(libusb_device_handle* dev, LogsysSpiCmd cmd, char* wrBuf, int wrLen, /*out*/char* rdBuf, int rdLen, char* status);
 
 #endif //_LOGSYSDRV_SERIO_H

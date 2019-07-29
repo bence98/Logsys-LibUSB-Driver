@@ -73,3 +73,22 @@ int logsys_spi_begin(libusb_device_handle* dev, LogsysSpiSpeed freq, LogsysSpiMo
 int logsys_spi_end(libusb_device_handle* dev){
 	return libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 33, 0, 0, NULL, 0, 0);
 }
+
+int logsys_spi_cmd(libusb_device_handle* dev, LogsysSpiCmd cmd, char* wrBuf, int wrLen, char* rdBuf, int rdLen, char* status){
+	char header[5];
+	TO_BYTES(wrLen, 4, header);
+	header[4]=1;
+	int res=libusb_bulk_transfer(dev, LOGSYS_OUT_EP1, header, sizeof(header), NULL, 0);
+	if(res<0) return res;
+	char tx[wrLen+1], rx[rdLen+1];
+	tx[0]=cmd;
+	memcpy(&tx[1], wrBuf, wrLen);
+	res=libusb_bulk_transfer(dev, LOGSYS_OUT_EP1, tx, sizeof(tx), NULL, 0);
+	if(res<0) return res;
+	res=libusb_bulk_transfer(dev, LOGSYS_IN_EP2,  rx, sizeof(rx), NULL, 0);
+	if(res<0) return res;
+	// WARNING status values unknown
+	if(status) *status=rx[0];
+	memcpy(rdBuf, &rx[1], rdLen);
+	return res;
+}
