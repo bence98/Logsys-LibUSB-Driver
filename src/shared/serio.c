@@ -74,9 +74,9 @@ int logsys_spi_end(libusb_device_handle* dev){
 	return libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 33, 0, 0, NULL, 0, 0);
 }
 
-int logsys_spi_cmd(libusb_device_handle* dev, LogsysSpiCmd cmd, char* wrBuf, int wrLen, char* rdBuf, int rdLen, char* status){
+int logsys_spi_cmd(libusb_device_handle* dev, LogsysSpiCmd cmd, const char* wrBuf, int wrLen, char* rdBuf, int rdLen, char* status){
 	char header[5];
-	TO_BYTES(wrLen, 4, header);
+	TO_BYTES(wrLen+1, 4, header);
 	header[4]=1;
 	int res=libusb_bulk_transfer(dev, LOGSYS_OUT_EP1, header, sizeof(header), NULL, 0);
 	if(res<0) return res;

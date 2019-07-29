@@ -208,7 +208,7 @@ int logsys_jtag_dl_xsvf(libusb_device_handle* dev, void* f){
 	return lsvf_play(dev, f, false);
 }
 
-void* logsys_conv_bit2svf(char* bitfile){
+void* logsys_conv_bit2svf(const char* bitfile){
 	int fdLastDir=open(".", O_DIRECTORY);
 	chdir("/tmp");
 	void* impactCmd=popen("$XILINX/bin/lin64/impact -batch", "w");

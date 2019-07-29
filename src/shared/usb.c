@@ -3,7 +3,7 @@
 #include "logsys/usb.h"
 #include "logsys/usb.private.h"
 
-bool logsys_was_init=false;
+static bool logsys_was_init=false;
 
 bool logsys_usb_init(){
 	if(libusb_init(NULL)!=0) return false;

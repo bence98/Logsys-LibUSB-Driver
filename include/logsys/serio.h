@@ -118,7 +118,7 @@ int logsys_usart_getstr(libusb_device_handle* dev, char* buf, int maxlen, /*out*
   * @param buf a byte array
   * @param len length of `buf`
   */
-int logsys_usart_putstr(libusb_device_handle* dev, char* buf, int len);
+int logsys_usart_putstr(libusb_device_handle* dev, /*const*/ char* buf, int len);
 
 /** Begin SPI */
 int logsys_spi_begin(libusb_device_handle* dev, LogsysSpiSpeed freq, LogsysSpiMode mode, bool* success);
@@ -126,6 +126,6 @@ int logsys_spi_begin(libusb_device_handle* dev, LogsysSpiSpeed freq, LogsysSpiMo
 int logsys_spi_end(libusb_device_handle* dev);
 
 /** Send SPI command */
-int logsys_spi_cmd(libusb_device_handle* dev, LogsysSpiCmd cmd, char* wrBuf, int wrLen, /*out*/char* rdBuf, int rdLen, char* status);
+int logsys_spi_cmd(libusb_device_handle* dev, LogsysSpiCmd cmd, const char* wrBuf, int wrLen, /*out*/char* rdBuf, int rdLen, char* status);
 
 #endif //_LOGSYSDRV_SERIO_H
