@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "logsys/status.h"
 
-double logsys_get_vcc_out(LogsysStatus status){
+double logsys_get_vsupply_out(LogsysStatus status){
 	short adcData=TO_WORD(status.vOutH, status.vOutL)&((1<<11)-1);
 	return (2.56*3/1023)*adcData;
 }

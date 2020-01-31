@@ -5,7 +5,7 @@
 #include "logsys/common.h"
 
 /** @returns Supply voltage */
-double logsys_get_vcc_out(LogsysStatus status);
+double logsys_get_vsupply_out(LogsysStatus status);
 /** @returns JTAG reference voltage */
 double logsys_get_vjtag_out(LogsysStatus status);
 /** @returns I/O reference voltage */
@@ -29,9 +29,9 @@ bool logsys_is_revcurr(LogsysStatus status);
 
 /** @returns JTAG interface in use? */
 bool logsys_is_jtag_used(LogsysStatus status);
-/** @returns CLOCK1 pin in use? */
+/** @returns CLOCK1 in use? */
 bool logsys_is_clk1_used(LogsysStatus status);
-/** @returns CLOCK2 pin in use? */
+/** @returns CLOCK2 in use? */
 bool logsys_is_clk2_used(LogsysStatus status);
 /** @returns RESET pin in use? */
 bool logsys_is_rst_used(LogsysStatus status);

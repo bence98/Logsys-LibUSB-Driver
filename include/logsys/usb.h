@@ -2,7 +2,7 @@
 #ifndef _LOGSYSDRV_USB_H
 #define _LOGSYSDRV_USB_H
 
-#include "logsys/usb.private.h"
+//#include "logsys/usb.private.h"
 #include "logsys/common.h"
 
 /** Set up LibUSB
@@ -30,6 +30,6 @@ void logsys_usb_close(libusb_device_handle* dev);
 bool logsys_hotplug_enable(libusb_hotplug_event evt_type, libusb_hotplug_callback_fn callback, /*out*/libusb_hotplug_callback_handle* hndl);
 
 // this line will be removed in 1.0
-#include "logsys/control.h"
+//#include "logsys/control.h"
 
 #endif //_LOGSYSDRV_USB_H
