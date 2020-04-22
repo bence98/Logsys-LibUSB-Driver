@@ -63,3 +63,32 @@ int logsys_usart_getstr(libusb_device_handle* dev, char* buf, int maxlen, int* l
 int logsys_usart_putstr(libusb_device_handle* dev, char* buf, int len){
 	return libusb_bulk_transfer(dev, LOGSYS_OUT_EP5, buf, len, NULL, 0);
 }
+
+int logsys_spi_begin(libusb_device_handle* dev, LogsysSpiSpeed freq, LogsysSpiMode mode, bool* success){
+	int res=libusb_control_transfer(dev, LOGSYS_REQTYP_IN, 32, (1<<freq)-1, mode, (char*)success, 1, 0);
+	if(res<0) return res;
+	return libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 34, 0, 0, NULL, 0, 0);
+}
+
+int logsys_spi_end(libusb_device_handle* dev){
+	return libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 33, 0, 0, NULL, 0, 0);
+}
+
+int logsys_spi_cmd(libusb_device_handle* dev, LogsysSpiCmd cmd, const char* wrBuf, int wrLen, char* rdBuf, int rdLen, char* status){
+	char header[5];
+	TO_BYTES(wrLen+1, 4, header);
+	header[4]=1;
+	int res=libusb_bulk_transfer(dev, LOGSYS_OUT_EP1, header, sizeof(header), NULL, 0);
+	if(res<0) return res;
+	char tx[wrLen+1], rx[rdLen+1];
+	tx[0]=cmd;
+	memcpy(&tx[1], wrBuf, wrLen);
+	res=libusb_bulk_transfer(dev, LOGSYS_OUT_EP1, tx, sizeof(tx), NULL, 0);
+	if(res<0) return res;
+	res=libusb_bulk_transfer(dev, LOGSYS_IN_EP2,  rx, sizeof(rx), NULL, 0);
+	if(res<0) return res;
+	// WARNING status values unknown
+	if(status) *status=rx[0];
+	memcpy(rdBuf, &rx[1], rdLen);
+	return res;
+}

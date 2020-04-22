@@ -1,5 +1,6 @@
 #include <libusb-1.0/libusb.h>
 #include <stdbool.h>
+#include "logsys/common.h"
 #include "logsys/jconf.h"
 #include "logsys/usb.private.h"
 

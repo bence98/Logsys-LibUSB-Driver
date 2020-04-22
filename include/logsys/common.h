@@ -11,6 +11,15 @@
 #define TO_WORD(h, l) (((h)&255)<<8|((l)&255))
 /** construct a 4-byte dword from high -> low bytes */
 #define TO_DWORD(h, j, k, l) (((h)&255)<<24|((j)&255)<<16|((k)&255)<<8|((l)&255))
+/** deconstruct a multi-byte int to bytes
+  * @param in the int
+  * @param len sizeof(type)
+  * @param out a char* buffer of size >= `len`
+  */
+#define TO_BYTES(in, len, out) {\
+	for(size_t i=0;i<(len);i++)\
+		(out)[i]=((in)>>(8*i))&0xff;\
+}
 
 /** Data from @link #logsys_get_status()@endlink */
 typedef struct{

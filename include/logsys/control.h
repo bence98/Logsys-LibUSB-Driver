@@ -1,3 +1,4 @@
+/** @file control.h Basic LOGSYS controls (VCC, CLK, RST etc.) */
 #ifndef _LOGSYSDRV_CTRL_H
 #define _LOGSYSDRV_CTRL_H
 
@@ -9,7 +10,7 @@ int logsys_get_status(libusb_device_handle* dev, /*out*/LogsysStatus* data);
 /** Get the @link LogsysClkStatus clock status@endlink of the device */
 int logsys_clk_status(libusb_device_handle* dev, /*out*/LogsysClkStatus* data);
 /** Starts the clock */
-int logsys_clk_start(libusb_device_handle* dev, int freqHz, bool* success);
+int logsys_clk_start(libusb_device_handle* dev, int freqHz, /*out*/bool* success);
 /** Stops the clock */
 int logsys_clk_stop(libusb_device_handle* dev, bool* was_running);
 
@@ -32,7 +33,7 @@ int logsys_get_pwr_corr(libusb_device_handle* dev, /*out*/char* ch);
 /** Sets VCC pin */
 int logsys_set_vcc(libusb_device_handle* dev, bool vcc);
 /** Gets VCC status */
-int logsys_get_vcc(libusb_device_handle* dev, /*out*/ bool* vcc);
+int logsys_get_vcc(libusb_device_handle* dev, /*out*/bool* vcc);
 
 /** Gets reverse current tolerance. Values in milliamps */
 int logsys_get_rev_curr(libusb_device_handle* dev, double* mAmps);

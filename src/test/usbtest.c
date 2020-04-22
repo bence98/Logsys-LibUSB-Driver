@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "logsys/usb.h"
+#include "logsys/control.h"
 #include "logsys/status.h"
 #include "logsys/jconf.h"
 

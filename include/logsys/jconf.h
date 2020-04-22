@@ -32,6 +32,6 @@ int logsys_jtag_dl_xsvf(libusb_device_handle* dev, void* f);
   * @param bitfile the path to the BIT file
   * @returns an open FILE* pointer to the SVF file
   */
-void* logsys_conv_bit2svf(char* bitfile);
+void* logsys_conv_bit2svf(const char* bitfile);
 
 #endif //_LOGSYSDRV_JCONF_H
