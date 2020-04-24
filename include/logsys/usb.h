@@ -4,16 +4,9 @@
 
 #include "logsys/common.h"
 
-/** Set up LibUSB
-  * @note You should always call it, at the start of the program, before calling any other LOGSYS functions
-  */
-bool logsys_usb_init();
-/** Release LibUSB
-  * @note You should call this right before your program quits, to ensure a clean exit
-  */
-bool logsys_usb_end();
-/** Open the USB device (LOGSYS)
+/** Open the USB device (i.e. a LOGSYS Download Cable)
   * @note pDev may be NULL, in which case we try to find a device
+  * @warning You should have initialized the LibUSB context before calling any LOGSYS functions!
   * @returns a LibUSB handle, or NULL on error
   */
 libusb_device_handle* logsys_usb_open(libusb_device* pDev);

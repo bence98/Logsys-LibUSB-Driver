@@ -19,7 +19,7 @@ void sigint_cb(int i){
 int main(void){
 	printf("Logsys USART test.\nExit with CTRL+c\n");
 	signal(SIGINT, sigint_cb);
-	if(!logsys_usb_init()){
+	if(libusb_init(NULL)!=0){
 		fprintf(stderr, "LibUSB error\n");
 		return 1;
 	}
@@ -27,7 +27,7 @@ int main(void){
 	libusb_device_handle* logsys=logsys_usb_open(NULL);
 	if(logsys==NULL){
 		fprintf(stderr, "USB open error\n");
-		logsys_usb_end();
+		libusb_exit(NULL);
 		return 2;
 	}
 	
@@ -51,6 +51,6 @@ int main(void){
 	printf("Exiting...\n");
 	logsys_usart_end(logsys);
 	logsys_usb_close(logsys);
-	logsys_usb_end();
+	libusb_exit(NULL);
 	return 0;
 }

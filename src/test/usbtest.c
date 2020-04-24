@@ -67,7 +67,7 @@ bool cmd_cmp(char* tokens[], size_t idx, char* to_find){
 
 int main(void){
 	printf("Logsys USB driver test.\nExit with \"quit\" or CTRL+D\nDo not CTRL+C / SIGKILL!\n");
-	if(!logsys_usb_init()){
+	if(libusb_init(NULL)!=0){
 		fprintf(stderr, "LibUSB error\n");
 		return 1;
 	}
@@ -75,7 +75,7 @@ int main(void){
 	libusb_device_handle* logsys=logsys_usb_open(NULL);
 	if(logsys==NULL){
 		fprintf(stderr, "USB open error\n");
-		logsys_usb_end();
+		libusb_exit(NULL);
 		return 2;
 	}
 	
@@ -267,6 +267,6 @@ int main(void){
 	}
 	printf("Exiting...\n");
 	logsys_usb_close(logsys);
-	logsys_usb_end();
+	libusb_exit(NULL);
 	return 0;
 }

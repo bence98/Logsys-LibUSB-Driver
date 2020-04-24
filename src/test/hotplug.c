@@ -25,7 +25,7 @@ int logsys_hp_callback(libusb_context *ctx, libusb_device *dev, libusb_hotplug_e
 int main(void){
 	printf("Hotplugging test, press Ctrl+C to quit\n");
 	signal(SIGINT, sigint_cb);
-	if(!logsys_usb_init()){
+	if(libusb_init(NULL)!=0){
 		fprintf(stderr, "LibUSB error\n");
 		return 1;
 	}
@@ -33,7 +33,7 @@ int main(void){
 	libusb_hotplug_callback_handle hndl;
 	if(!logsys_hotplug_enable(LIBUSB_HOTPLUG_EVENT_DEVICE_ARRIVED|LIBUSB_HOTPLUG_EVENT_DEVICE_LEFT, logsys_hp_callback, &hndl)){
 		fprintf(stderr, "Hotplug listen error\n");
-		logsys_usb_end();
+		libusb_exit(NULL);
 		return 3;
 	}
 	
@@ -42,5 +42,6 @@ int main(void){
 		sleep(1);
 	}
 	libusb_hotplug_deregister_callback(NULL, hndl);
+	libusb_exit(NULL);
 	return 0;
 }
