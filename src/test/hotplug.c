@@ -31,7 +31,7 @@ int main(void){
 	}
 	
 	libusb_hotplug_callback_handle hndl;
-	if(!logsys_hotplug_enable(LIBUSB_HOTPLUG_EVENT_DEVICE_ARRIVED|LIBUSB_HOTPLUG_EVENT_DEVICE_LEFT, logsys_hp_callback, &hndl)){
+	if(!logsys_hotplug_enable(NULL, LIBUSB_HOTPLUG_EVENT_DEVICE_ARRIVED|LIBUSB_HOTPLUG_EVENT_DEVICE_LEFT, logsys_hp_callback, NULL, &hndl)){
 		fprintf(stderr, "Hotplug listen error\n");
 		libusb_exit(NULL);
 		return 3;

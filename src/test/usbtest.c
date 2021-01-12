@@ -72,7 +72,7 @@ int main(void){
 		return 1;
 	}
 	
-	libusb_device_handle* logsys=logsys_usb_open(NULL);
+	libusb_device_handle* logsys=logsys_usb_open(NULL, NULL);
 	if(logsys==NULL){
 		fprintf(stderr, "USB open error\n");
 		libusb_exit(NULL);
