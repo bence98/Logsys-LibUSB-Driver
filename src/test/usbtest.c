@@ -108,6 +108,24 @@ int main(void){
 					logsys_is_end_ni_used(status)?'.':' ',
 					logsys_is_end_int_used(status)?'.':' '
 				);
+		}else if(cmd_cmp(cmd, 0, "fw")){
+			if(cmd_cmp(cmd, 1, "get")){
+				LogsysFirmwareVersion fwVer;
+				res=logsys_fw_get_ver(logsys, &fwVer);
+				if(res<0){
+					fprintf(stderr, "Failed! %s\n", libusb_error_name(res));
+					continue;
+				}
+				printf("FW version %d.%d\n", fwVer.major, fwVer.minor);
+			}else if(cmd_cmp(cmd, 1, "update")){
+				res=logsys_fw_update(logsys);
+				if(res<0){
+					fprintf(stderr, "Failed! %s\n", libusb_error_name(res));
+					continue;
+				}
+				printf("LDC is now in DFU mode\nDO NOT flash unless given explicit permission from a faculty member!\n");
+				break;
+			}
 		}else if(cmd_cmp(cmd, 0, "clk")){
 			if(cmd_cmp(cmd, 1, "status")){
 				LogsysClkStatus clkStatus;

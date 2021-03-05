@@ -57,6 +57,10 @@ typedef enum{
 	MODE_CMP
 } LogsysJtagMode;
 
+typedef struct{
+	char major, minor;
+} LogsysFirmwareVersion;
+
 /** Calculate clock registers for the given frequency
   * @param clkFreqHz frequency in Hz
   * @param divisor 2 for the standard clock and 4 for the Serial port clock

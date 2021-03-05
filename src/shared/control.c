@@ -70,3 +70,14 @@ int logsys_get_active_func(libusb_device_handle* dev, LogsysFunction* func){
 	if(resp>0) *func=data;
 	return resp;
 }
+
+int logsys_fw_get_ver(libusb_device_handle* dev, LogsysFirmwareVersion* func){
+	return libusb_control_transfer(dev, LOGSYS_REQTYP_IN, 8, 0, 0, (char*)func, sizeof(LogsysFirmwareVersion), 0);
+}
+
+__attribute__((weak))
+int logsys_fw_update(libusb_device_handle* dev){
+	/* I won't give an implementation here. Students don't need to call this function;
+	 * faculty members may apply for an "unlocked" version of the driver */
+	return LIBUSB_ERROR_ACCESS;
+}
