@@ -19,7 +19,9 @@ MAJOR=0
 #RC1
 SUBVERSION=0.1
 CFLAGS=-I./include -I./libxsvf -g
+CXXFLAGS=-I./include -g
 LDFLAGS_TEST=-L./build -llogsys-drv
+LDFLAGS_TESTXX=-L./build -llogsyspp -llogsys-drv
 ifeq ($(OS), macOS)
 LIBNAME=liblogsys-drv.dylib
 LDFLAGS_SO=--shared -Wl,-install_name,$(LIBNAME).$(MAJOR)
@@ -37,6 +39,8 @@ LDFLAGS_COMMON=-lusb-1.0
 endif
 
 OBJS_SO=build/tmp/shared/control.o build/tmp/shared/jconf.o build/tmp/shared/jctrl.o build/tmp/shared/usb.o build/tmp/shared/serio.o build/tmp/shared/status.o
+
+OBJS_PP_A=build/tmp/cpp/logsys.o build/tmp/cpp/jtag.o
 
 all: build/$(LIBNAME)
 
@@ -72,6 +76,9 @@ libxsvf/libxsvf.a:
 build/$(LIBNAME): $(OBJS_SO) libxsvf/libxsvf.a
 	$(CC) $(CFLAGS) $^ $(LDFLAGS_COMMON) $(LDFLAGS_SO) -o $@
 
+build/liblogsyspp.a: $(OBJS_PP_A)
+	$(AR) rc $@ -- $^
+
 build/logsys-test: build/tmp/test/usbtest.o
 	$(CC) $(CFLAGS) $^ $(LDFLAGS_COMMON) $(LDFLAGS_TEST) -o $@
 
@@ -84,10 +91,21 @@ build/serio-test: build/tmp/test/sio_fb.o
 build/usart-test: build/tmp/test/uarttest.o
 	$(CC) $(CFLAGS) $^ $(LDFLAGS_COMMON) $(LDFLAGS_TEST) -o $@
 
+build/cpp-test: build/tmp/test/cpptest.cpp.o
+	$(CXX) $(CXXFLAGS) $^ -lstdc++ $(LDFLAGS_COMMON) $(LDFLAGS_TESTXX) -o $@
+
 build/tmp/shared/%.o: src/shared/%.c
 	mkdir -p $(@D)
 	$(CC) $(CFLAGS) -c -fPIC $< -o $@
 
+build/tmp/cpp/%.o: src/cpp/%.cpp
+	mkdir -p $(@D)
+	$(CXX) $(CXXFLAGS) -c -fPIC $< -o $@
+
 build/tmp/test/%.o: src/test/%.c
 	mkdir -p $(@D)
 	$(CC) $(CFLAGS) -c $< -o $@
+
+build/tmp/test/%.cpp.o: src/test/%.cpp
+	mkdir -p $(@D)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
