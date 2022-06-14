@@ -1,13 +1,15 @@
 #include <libusb-1.0/libusb.h>
 #include <stdbool.h>
 #include "logsys/common.h"
+#include "logsys/control.h"
 #include "logsys/jconf.h"
 #include "logsys/usb.private.h"
 
 int logsys_jtag_begin(libusb_device_handle* dev, LogsysJtagMode mode, bool* ready){
 	int resp=libusb_control_transfer(dev, LOGSYS_REQTYP_IN,  16, mode, 0, (char*)ready, 1, 0);
+	LogsysFunction func;
 	if(resp<0) return resp;
-	if(!ready) return -1;
+	if(!*ready) return -1;
 	
 	//now we un-halt two endpoints
 	libusb_clear_halt(dev, LOGSYS_OUT_EP1);
@@ -16,13 +18,10 @@ int logsys_jtag_begin(libusb_device_handle* dev, LogsysJtagMode mode, bool* read
 	//we begin JTAG transmission?
 	resp=libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 18, 0, 0, NULL, 0, 0);
 	if(resp<0) return resp;
-	//we read 2 bytes
-	//NOTE to self: it looks like `logsys_get_active_func()`, except the wLength
-	char tmp[2];
-	resp=libusb_control_transfer(dev, LOGSYS_REQTYP_IN,  3, 0, 0, tmp, 2, 0);
-	//this was in the disassembly of L-GUI, no clue why
-	//edit: modified as it wouldn't start in MODE_CMP mode
-	*ready=tmp[0]==mode&&tmp[1]!=0;
+	
+	// Making sure the function was set and started
+	logsys_get_active_func(dev, &func, ready);
+	*ready&=func==mode;
 	return resp;
 }
 

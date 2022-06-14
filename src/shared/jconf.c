@@ -105,7 +105,7 @@ void lsvf_flush_iobuf(struct udata_s* u){
 int lsvf_host_setup(struct libxsvf_host *h){
 	bool ok;
 	struct udata_s* u=h->user_data;
-	logsys_get_active_func(u->dev, (LogsysFunction*) &u->mode);
+	logsys_get_active_func(u->dev, (LogsysFunction*) &u->mode, NULL);
 	if(u->mode)
 		ok=logsys_jtag_set_mode(u->dev, MODE_CMP)>=0;
 	else

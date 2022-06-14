@@ -64,10 +64,13 @@ int logsys_set_rev_curr(libusb_device_handle* dev, double mAmps){
 	return libusb_control_transfer(dev, LOGSYS_REQTYP_OUT, 2, 0x0300, data, NULL, 0, 0);
 }
 
-int logsys_get_active_func(libusb_device_handle* dev, LogsysFunction* func){
-	char data;
-	int resp=libusb_control_transfer(dev, LOGSYS_REQTYP_IN, 3, 0, 0, &data, 1, 0);
-	if(resp>0) *func=data;
+int logsys_get_active_func(libusb_device_handle* dev, LogsysFunction* func, bool* active){
+	char data[2];
+	int resp=libusb_control_transfer(dev, LOGSYS_REQTYP_IN, 3, 0, 0, data, 2, 0);
+	if(resp>=0){
+		if(func)   *func=data[0];
+		if(active) *active=data[1];
+	}
 	return resp;
 }
 

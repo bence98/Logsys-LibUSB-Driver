@@ -41,7 +41,7 @@ int logsys_get_rev_curr(libusb_device_handle* dev, double* mAmps);
 int logsys_set_rev_curr(libusb_device_handle* dev, double mAmps);
 
 /** Gets the active (non-interrupting) function */
-int logsys_get_active_func(libusb_device_handle* dev, /*out*/LogsysFunction* func);
+int logsys_get_active_func(libusb_device_handle* dev, /*out?*/LogsysFunction* func, /*out?*/bool* active);
 
 /** Gets the firmware version */
 int logsys_fw_get_ver(libusb_device_handle* dev, /*out*/LogsysFirmwareVersion* func);
