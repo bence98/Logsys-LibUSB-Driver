@@ -1,6 +1,6 @@
 #!/bin/sh
 echo "Installing UDEV rule... $1"
-cat <<EOF >$1/etc/udev/rules.d/90-logsys.rules
+cat <<EOF >$1/lib/udev/rules.d/90-logsys.rules
 #Logsys Dev Cable udev rules
 #Part of the Logsys LibUSB driver
 

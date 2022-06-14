@@ -13,15 +13,16 @@ else
 OS=N/A
 endif
 
-CC=gcc
 #Release Candidate
 MAJOR=0
 #RC1
 SUBVERSION=0.1
+
 CFLAGS=-I./include -I./libxsvf -g
 CXXFLAGS=-I./include -g
 LDFLAGS_TEST=-L./build -llogsys-drv
 LDFLAGS_TESTXX=-L./build -llogsyspp -llogsys-drv
+
 ifeq ($(OS), macOS)
 LIBNAME=liblogsys-drv.dylib
 LDFLAGS_SO=--shared -Wl,-install_name,$(LIBNAME).$(MAJOR)
@@ -38,13 +39,17 @@ ifeq ($(LDFLAGS_COMMON),)
 LDFLAGS_COMMON=-lusb-1.0
 endif
 
-OBJS_SO=build/tmp/shared/control.o build/tmp/shared/jconf.o build/tmp/shared/jctrl.o build/tmp/shared/usb.o build/tmp/shared/serio.o build/tmp/shared/status.o
+LIBNAME_CPP=liblogsyspp.a
 
-OBJS_PP_A=build/tmp/cpp/logsys.o build/tmp/cpp/jtag.o
+SRCS_SHARED=$(notdir $(wildcard src/shared/*))
+OBJS_SO=$(foreach src, $(SRCS_SHARED), build/tmp/shared/$(basename $(src)).o)
 
-all: build/$(LIBNAME)
+SRCS_CPP=$(notdir $(wildcard src/cpp/*))
+OBJS_CPP=$(foreach src, $(SRCS_CPP), build/tmp/cpp/$(basename $(src)).o)
 
-test: build/logsys-test build/hotplug-test build/serio-test
+all: build/$(LIBNAME) build/$(LIBNAME_CPP)
+
+test: build/logsys-test build/hotplug-test build/serio-test build/cpp-test
 
 clean:
 	rm -rf build
@@ -59,15 +64,16 @@ else ifeq ($(OS), macOS)
 endif
 	ln -sf /usr/local/lib/$(LIBNAME).$(MAJOR) /usr/local/lib/$(LIBNAME)
 
-prep-pkg: build/$(LIBNAME) build/logsys-test
+prep-pkg: build/$(LIBNAME) build/$(LIBNAME_CPP) build/logsys-test
 	mkdir -p $(DESTDIR)/usr/lib/
 	mkdir -p $(DESTDIR)/usr/bin/
-	mkdir -p $(DESTDIR)/etc/udev/rules.d/
+	mkdir -p $(DESTDIR)/lib/udev/rules.d/
 	cp -R include $(DESTDIR)/usr/include
 	cp libxsvf/*.h $(DESTDIR)/usr/include
 	cp $< $(DESTDIR)/usr/lib/$(LIBNAME).$(MAJOR).$(SUBVERSION)
 	cd $(DESTDIR)/usr/lib/; ln -s $(LIBNAME).$(MAJOR) $(LIBNAME); ln -s $(LIBNAME).$(MAJOR).$(SUBVERSION) $(LIBNAME).$(MAJOR)
-	cp $(word 2,$^) $(DESTDIR)/usr/bin/
+	cp $(word 2,$^) $(DESTDIR)/usr/lib/
+	cp $(word 3,$^) $(DESTDIR)/usr/bin/
 	./udev-rule.sh $(DESTDIR)
 
 libxsvf/libxsvf.a:
@@ -76,7 +82,7 @@ libxsvf/libxsvf.a:
 build/$(LIBNAME): $(OBJS_SO) libxsvf/libxsvf.a
 	$(CC) $(CFLAGS) $^ $(LDFLAGS_COMMON) $(LDFLAGS_SO) -o $@
 
-build/liblogsyspp.a: $(OBJS_PP_A)
+build/$(LIBNAME_CPP): $(OBJS_CPP)
 	$(AR) rc $@ -- $^
 
 build/logsys-test: build/tmp/test/usbtest.o

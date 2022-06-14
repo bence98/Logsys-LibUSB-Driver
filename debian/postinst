@@ -1,5 +1,4 @@
 #!/bin/sh
 set -e
 #DEBHELPER#
-#ldconfig /usr/lib
-udevadm control --reload
+udevadm control --reload || true

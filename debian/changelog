@@ -1,3 +1,15 @@
+logsys-drv (0~rc4focal1) focal; urgency=medium
+
+  * API refactor
+  * Removed `logsys_usb_init()`/`logsys_usb_end()`
+  * Add context handling and hotplug userdata passing
+  * Added getting firmware version
+  * Fixing JTAG download getting stuck when JTAG is open
+  * Many bugfixes, cleanups and fixed warnings
+  * Beginnings of SPI and the C++ layer
+
+ -- Bence <bence98@sch.bme.hu>  Tue, 14 Jun 2022 15:40:23 +0200
+
 logsys-drv (0-rc3) bionic; urgency=medium
 
   * Created source package
