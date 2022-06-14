@@ -12,6 +12,7 @@
 #include "logsys/usb.h"
 #include "logsys/usb.private.h"
 #include "logsys/jconf.h"
+#include "logsys/control.h"
 
 struct jtag_lines{
 	//0: low, 1: high, -1: keep/don't care
@@ -21,6 +22,7 @@ struct jtag_lines{
 struct udata_s{
 	libusb_device_handle* dev;
 	FILE* svfFile;
+	LogsysJtagMode mode;
 	struct jtag_lines out_buf[4096];
 	short o_ptr;
 	bool cmpMode, wasCmpErr;
@@ -103,14 +105,21 @@ void lsvf_flush_iobuf(struct udata_s* u){
 int lsvf_host_setup(struct libxsvf_host *h){
 	bool ok;
 	struct udata_s* u=h->user_data;
-	logsys_jtag_begin(u->dev, MODE_CMP, &ok);
+	logsys_get_active_func(u->dev, (LogsysFunction*) &u->mode);
+	if(u->mode)
+		ok=logsys_jtag_set_mode(u->dev, MODE_CMP)>=0;
+	else
+		logsys_jtag_begin(u->dev, MODE_CMP, &ok);
 	return ok?0:-1;
 }
 
 int lsvf_host_shutdown(struct libxsvf_host *h){
 	struct udata_s* u=h->user_data;
 	lsvf_flush_iobuf(u);
-	logsys_jtag_end(u->dev);
+	if(u->mode)
+		logsys_jtag_set_mode(u->dev, u->mode);
+	else
+		logsys_jtag_end(u->dev);
 	return 0;
 }
 
