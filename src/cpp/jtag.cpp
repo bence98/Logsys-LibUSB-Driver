@@ -17,7 +17,7 @@ LogsysMode& LogsysMode::operator =(const LogsysJtagMode& mode){
 
 LogsysJtag::LogsysJtag(LogsysDownloadCable& cable, LogsysJtagMode mode) : cable(cable) {
 	bool ready=false;
-	int ret=logsys_jtag_begin(this->cable.dev, mode, &ready);
+	_check_libusb_status(logsys_jtag_begin(this->cable.dev, mode, &ready), "Could not open JTAG");
 	if(!ready)
 		throw std::runtime_error("JTAG not ready!");
 }
@@ -29,19 +29,17 @@ LogsysJtag::~LogsysJtag(){
 std::list<uint32_t> LogsysJtag::scan(int max_devs){
 	uint32_t devs[max_devs];
 	int dev_len;
-	int res=logsys_jtag_scan(this->cable.dev, devs, max_devs, &dev_len);
-	if(res)
-		throw std::runtime_error("Could not scan!");
+	_check_libusb_status(logsys_jtag_scan(this->cable.dev, devs, max_devs, &dev_len), "Could not scan");
 	return std::list<uint32_t>(devs, devs+dev_len);
 }
 
 void LogsysJtag::setMode(LogsysJtagMode mode){
-	logsys_jtag_set_mode(this->cable.dev, mode);
+	_check_libusb_status(logsys_jtag_set_mode(this->cable.dev, mode), "Could not set JTAG mode");
 }
 
 LogsysJtagMode LogsysJtag::getMode(){
 	LogsysJtagMode mode;
-	logsys_jtag_get_mode(this->cable.dev, &mode);
+	_check_libusb_status(logsys_jtag_get_mode(this->cable.dev, &mode), "Could not get JTAG mode");
 	return mode;
 }
 

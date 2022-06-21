@@ -9,35 +9,35 @@ extern "C"{
 
 bool LogsysClock::start(int freqHz) const{
 	bool ret;
-	logsys_clk_start(this->cable.dev, freqHz, &ret);
+	_check_libusb_status(logsys_clk_start(this->cable.dev, freqHz, &ret), "Could not start clock");
 	return ret;
 }
 
 bool LogsysClock::stop(){
 	bool ret;
-	logsys_clk_stop(this->cable.dev, &ret);
+	_check_libusb_status(logsys_clk_stop(this->cable.dev, &ret), "Could not stop clock");
 	return ret;
 }
 
 bool LogsysReset::set(bool val){
 	bool ret;
-	logsys_set_reset(this->cable.dev, val, &ret);
+	_check_libusb_status(logsys_set_reset(this->cable.dev, val, &ret), "Could not set RST");
 	return ret;
 }
 
 bool LogsysReset::get() const{
 	bool ret;
-	logsys_get_reset(this->cable.dev, &ret);
+	_check_libusb_status(logsys_get_reset(this->cable.dev, &ret), "Could not get RST");
 	return ret;
 }
 
 void LogsysVcc::set(bool val){
-	logsys_set_vcc(this->cable.dev, val);
+	_check_libusb_status(logsys_set_vcc(this->cable.dev, val), "Could not set VCC");
 }
 
 bool LogsysVcc::get(){
 	bool ret;
-	logsys_get_vcc(this->cable.dev, &ret);
+	_check_libusb_status(logsys_get_vcc(this->cable.dev, &ret), "Could not get VCC");
 	return ret;
 }
 

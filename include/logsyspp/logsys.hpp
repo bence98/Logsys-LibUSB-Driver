@@ -1,9 +1,17 @@
 #ifndef _LOGSYSDRV_LOGSYS_HPP
 #define _LOGSYSDRV_LOGSYS_HPP
 
+#include <string>
+#include <stdexcept>
+
 extern "C"{
 #include <libusb-1.0/libusb.h>
 #include "logsys/common.h"
+}
+
+static inline _check_libusb_status(int status, std::string errmsg){
+	if(status<0)
+		throw std::invalid_argument(errmsg+": "+libusb_strerror(status));
 }
 
 // Forward declaration
