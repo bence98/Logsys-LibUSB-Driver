@@ -9,9 +9,9 @@ extern "C"{
 #include "logsys/common.h"
 }
 
-static inline _check_libusb_status(int status, std::string errmsg){
+static inline void _check_libusb_status(int status, std::string errmsg){
 	if(status<0)
-		throw std::invalid_argument(errmsg+": "+libusb_strerror(status));
+		throw std::invalid_argument(errmsg+": "+libusb_strerror((libusb_error)status));
 }
 
 // Forward declaration
